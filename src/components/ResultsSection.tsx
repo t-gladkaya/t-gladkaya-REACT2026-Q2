@@ -1,6 +1,7 @@
 import React from 'react';
 import Card from './Card';
 import type { Planet } from './Card';
+import PaginationButtons from './Pagination';
 
 interface PlanetResults {
   count: number;
@@ -36,13 +37,14 @@ class ResultsSection extends React.Component<
                 Results will be displayed here.
               </div>
             ) : (
-              <div className="grid gap-5 md:grid-cols-3">
-                {results.map((item) => (
+              <div className="grid justify-items-center gap-5 md:grid-cols-3">
+                {results.slice(0, 9).map((item) => (
                   <Card key={item.url} data={item} />
                 ))}
               </div>
             )}
           </div>
+          <PaginationButtons />
         </div>
       </div>
     );

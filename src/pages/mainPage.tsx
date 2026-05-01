@@ -1,6 +1,7 @@
 import React from 'react';
 import SearchLine from '../components/SearchLine';
 import ResultsSection from '../components/ResultsSection';
+import TestButton from '../components/TestButton';
 import type { Planet } from '../components/Card';
 import { API_URLS } from '../api/api';
 
@@ -84,6 +85,7 @@ class MainPage extends React.Component<object, MainPageState> {
             onSearch={this.handleSearch}
           />
           <ResultsSection results={results} loading={loading} error={error} />
+          <TestButton />
         </div>
       </div>
     );
