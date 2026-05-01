@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "cd .. && git config core.hooksPath rs-react-app/.husky",
+    "prepare": "git config core.hooksPath .husky",
     "format:fix": "prettier --write ."
   },
   "dependencies": {

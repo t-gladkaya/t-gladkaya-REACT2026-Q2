@@ -1,8 +1,6 @@
 #!/usr/bin/env sh
 
-cd rs-react-app
-
-staged_files=$(git diff --cached --name-only --diff-filter=ACMR --relative=rs-react-app)
+staged_files=$(git diff --cached --name-only --diff-filter=ACMR)
 [ -z "$staged_files" ] && exit 0
 
 npx.cmd prettier --write --ignore-unknown $staged_files
