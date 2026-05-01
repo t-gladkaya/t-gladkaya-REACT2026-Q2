@@ -1,16 +1,93 @@
 import React from 'react';
-import SearchLine from '../components/searchLine';
-import ResultsSection from '../components/resultsSection';
+import SearchLine from '../components/SearchLine';
+import ResultsSection from '../components/ResultsSection';
+import type { Planet } from '../components/Card';
+import { API_URLS } from '../api/api';
 
-const MainPage: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto flex min-h-screen max-w-295 flex-col gap-8 px-6 py-8">
-        <SearchLine />
-        <ResultsSection />
+interface PlanetResponse {
+  results: Planet[];
+}
+
+interface MainPageState {
+  query: string;
+  results: Planet[];
+  loading: boolean;
+  error: string | null;
+}
+
+class MainPage extends React.Component<object, MainPageState> {
+  state: MainPageState = {
+    query: '',
+    results: [],
+    loading: false,
+    error: null,
+  };
+
+  componentDidMount() {
+    void this.handleSearch();
+  }
+
+  handleQueryChange = (query: string) => {
+    this.setState({ query });
+  };
+
+  handleSearch = async () => {
+    this.setState({ loading: true, error: null });
+
+    try {
+      const data = await this.fetchPlanet(this.state.query);
+      this.setState({ results: data.results, loading: false });
+    } catch (error) {
+      console.error(error);
+      this.setState({
+        results: [],
+        loading: false,
+        error: 'Something went wrong while loading results.',
+      });
+    }
+  };
+
+  fetchPlanet = async (query: string): Promise<PlanetResponse> => {
+    let lastError: unknown;
+
+    for (const apiUrl of API_URLS) {
+      try {
+        const trimmedQuery = query.trim();
+        const url = trimmedQuery
+          ? `${apiUrl}?search=${encodeURIComponent(trimmedQuery)}`
+          : apiUrl;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        return (await response.json()) as PlanetResponse;
+      } catch (error) {
+        lastError = error;
+        console.error(`Error fetching from ${apiUrl}: `, error);
+      }
+    }
+
+    throw lastError ?? new Error('Failed to fetch planets.');
+  };
+
+  render() {
+    const { query, results, loading, error } = this.state;
+
+    return (
+      <div className="min-h-screen bg-slate-50 text-slate-900">
+        <div className="mx-auto flex min-h-screen max-w-295 flex-col gap-8 px-6 py-8">
+          <SearchLine
+            value={query}
+            onChange={this.handleQueryChange}
+            onSearch={this.handleSearch}
+          />
+          <ResultsSection results={results} loading={loading} error={error} />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 export default MainPage;
