@@ -4,6 +4,10 @@ import ResultsSection from '../components/ResultsSection';
 import TestButton from '../components/TestButton';
 import type { Character } from '../components/Card';
 import { API_URLS } from '../api/api';
+import {
+  getSavedSearchTerm,
+  saveSearchTerm,
+} from '../utils/handleLocalStorage';
 
 interface CharacterResponse {
   results: Character[];
@@ -25,7 +29,11 @@ class MainPage extends React.Component<object, MainPageState> {
   };
 
   componentDidMount() {
-    void this.handleSearch();
+    const savedQuery = getSavedSearchTerm();
+
+    this.setState({ query: savedQuery }, () => {
+      void this.handleSearch();
+    });
   }
 
   handleQueryChange = (query: string) => {
@@ -33,6 +41,7 @@ class MainPage extends React.Component<object, MainPageState> {
   };
 
   handleSearch = async () => {
+    saveSearchTerm(this.state.query);
     this.setState({ loading: true, error: null });
 
     try {
@@ -55,9 +64,13 @@ class MainPage extends React.Component<object, MainPageState> {
       try {
         const trimmedQuery = query.trim();
         const url = trimmedQuery
-          ? `${apiUrl}?search=${encodeURIComponent(trimmedQuery)}`
+          ? `${apiUrl}?name=${encodeURIComponent(trimmedQuery)}`
           : apiUrl;
         const response = await fetch(url);
+
+        if (response.status === 404) {
+          return { results: [] };
+        }
 
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`);
