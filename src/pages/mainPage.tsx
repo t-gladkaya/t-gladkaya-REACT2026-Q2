@@ -15,21 +15,23 @@ interface CharacterResponse {
 
 interface MainPageState {
   query: string;
+  lastSearchedQuery: string | null;
   results: Character[];
   loading: boolean;
-  error: string | null;
+  error: Error | null;
 }
 
 class MainPage extends React.Component<object, MainPageState> {
   state: MainPageState = {
     query: '',
+    lastSearchedQuery: null,
     results: [],
     loading: false,
     error: null,
   };
 
   componentDidMount() {
-    const savedQuery = getSavedSearchTerm();
+    const savedQuery = getSavedSearchTerm().trim();
 
     this.setState({ query: savedQuery }, () => {
       void this.handleSearch();
@@ -41,18 +43,28 @@ class MainPage extends React.Component<object, MainPageState> {
   };
 
   handleSearch = async () => {
-    saveSearchTerm(this.state.query);
-    this.setState({ loading: true, error: null });
+    const trimmedQuery = this.state.query.trim();
+
+    if (trimmedQuery === this.state.lastSearchedQuery) {
+      return;
+    }
+
+    saveSearchTerm(trimmedQuery);
+    this.setState({
+      query: trimmedQuery,
+      loading: true,
+      error: null,
+      lastSearchedQuery: trimmedQuery,
+    });
 
     try {
-      const data = await this.fetchCharacter(this.state.query);
+      const data = await this.fetchCharacter(trimmedQuery);
       this.setState({ results: data.results, loading: false });
-    } catch (error) {
-      console.error(error);
+    } catch {
       this.setState({
         results: [],
         loading: false,
-        error: 'Something went wrong while loading results.',
+        error: new Error('Something went wrong while loading results.'),
       });
     }
   };
@@ -79,7 +91,6 @@ class MainPage extends React.Component<object, MainPageState> {
         return (await response.json()) as CharacterResponse;
       } catch (error) {
         lastError = error;
-        console.error(`Error fetching from ${apiUrl}: `, error);
       }
     }
 

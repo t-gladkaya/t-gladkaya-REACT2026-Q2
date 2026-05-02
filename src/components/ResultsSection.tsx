@@ -1,7 +1,8 @@
 import React from 'react';
 import Card from './Card';
 import type { Character } from './Card';
-import PaginationButtons from './Pagination';
+import PreLoader from './PreLoader';
+import ErrorFallback from './ErrorFallback';
 
 interface CharacterResults {
   count: number;
@@ -11,7 +12,7 @@ interface CharacterResults {
 interface ResultsSectionProps {
   results: Character[];
   loading: boolean;
-  error?: string | null;
+  error?: Error | null;
 }
 
 class ResultsSection extends React.Component<
@@ -29,22 +30,19 @@ class ResultsSection extends React.Component<
           </div>
           <div className="w-full">
             {loading ? (
-              <div className="text-slate-600">Loading...</div>
+              <PreLoader />
             ) : error ? (
-              <div className="text-red-600">{error}</div>
+              <ErrorFallback error={error} />
             ) : results.length === 0 ? (
-              <div className="text-slate-600">
-                Results will be displayed here.
-              </div>
+              <div className="text-slate-600">No results</div>
             ) : (
               <div className="grid justify-items-center gap-5 md:grid-cols-4">
-                {results.slice(0, 12).map((item) => (
+                {results.map((item) => (
                   <Card key={item.id} data={item} />
                 ))}
               </div>
             )}
           </div>
-          <PaginationButtons />
         </div>
       </div>
     );
