@@ -1,1 +1,1 @@
-export const API_URLS = ['https://swapi.dev/api/planets/'];
+export const API_URLS = ['https://rickandmortyapi.com/api/character'];

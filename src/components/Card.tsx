@@ -1,69 +1,41 @@
 import React from 'react';
 
-export interface Planet {
+export interface Character {
+  id: string;
   name: string;
-  rotation_period: string;
-  orbital_period: string;
-  diameter: string;
-  climate: string;
-  gravity: string;
-  terrain: string;
-  surface_water: string;
-  population: string;
-  url: string;
+  status: string;
+  species: string;
+  gender: string;
+  image: string;
 }
 
 interface CardProps {
-  data: Planet;
+  data: Character;
 }
 
 class Card extends React.Component<CardProps> {
   render() {
-    const {
-      name,
-      rotation_period,
-      orbital_period,
-      diameter,
-      climate,
-      gravity,
-      terrain,
-      surface_water,
-      population,
-    } = this.props.data;
+    const { name, status, species, gender, image } = this.props.data;
 
     return (
-      <div className="bg-white rounded-3xl p-5 shadow-md w-full max-w-sm">
+      <div className="flex flex-col items-center bg-white rounded-3xl p-5 shadow-md w-full max-w-sm">
         <h2 className="text-xl font-semibold text-slate-900">{name}</h2>
-        <div className="mt-3 space-y-2 text-sm text-slate-700">
+        <div className="flex flex-col gap-1 mt-3 space-y-2 text-sm text-slate-700">
           <p>
-            <span className="font-semibold">Name:</span> {name}
+            <span className="font-semibold">Status:</span> {status}
           </p>
           <p>
-            <span className="font-semibold">Rotation Period:</span>{' '}
-            {rotation_period}
+            <span className="font-semibold">Species:</span> {species}
           </p>
           <p>
-            <span className="font-semibold">Orbital Period:</span>{' '}
-            {orbital_period}
+            <span className="font-semibold">Gender:</span> {gender}
           </p>
           <p>
-            <span className="font-semibold">Diameter:</span> {diameter} km
-          </p>
-          <p>
-            <span className="font-semibold">Climate:</span> {climate}
-          </p>
-          <p>
-            <span className="font-semibold">Gravity:</span> {gravity}
-          </p>
-          <p>
-            <span className="font-semibold">Terrain:</span> {terrain}
-          </p>
-          <p>
-            <span className="font-semibold">Surface Water:</span>{' '}
-            {surface_water}
-          </p>
-          <p>
-            <span className="font-semibold">Population:</span> {population}
+            <img
+              src={image}
+              alt="Character image"
+              className="h-40 rounded-lg"
+            />
           </p>
         </div>
       </div>

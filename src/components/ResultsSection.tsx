@@ -1,22 +1,22 @@
 import React from 'react';
 import Card from './Card';
-import type { Planet } from './Card';
+import type { Character } from './Card';
 import PaginationButtons from './Pagination';
 
-interface PlanetResults {
+interface CharacterResults {
   count: number;
-  results: Planet[];
+  results: Character[];
 }
 
 interface ResultsSectionProps {
-  results: Planet[];
+  results: Character[];
   loading: boolean;
   error?: string | null;
 }
 
 class ResultsSection extends React.Component<
   ResultsSectionProps,
-  PlanetResults
+  CharacterResults
 > {
   render() {
     const { results, loading, error } = this.props;
@@ -37,9 +37,9 @@ class ResultsSection extends React.Component<
                 Results will be displayed here.
               </div>
             ) : (
-              <div className="grid justify-items-center gap-5 md:grid-cols-3">
-                {results.slice(0, 9).map((item) => (
-                  <Card key={item.url} data={item} />
+              <div className="grid justify-items-center gap-5 md:grid-cols-4">
+                {results.slice(0, 12).map((item) => (
+                  <Card key={item.id} data={item} />
                 ))}
               </div>
             )}

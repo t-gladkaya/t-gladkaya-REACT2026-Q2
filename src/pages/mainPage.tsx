@@ -2,16 +2,16 @@ import React from 'react';
 import SearchLine from '../components/SearchLine';
 import ResultsSection from '../components/ResultsSection';
 import TestButton from '../components/TestButton';
-import type { Planet } from '../components/Card';
+import type { Character } from '../components/Card';
 import { API_URLS } from '../api/api';
 
-interface PlanetResponse {
-  results: Planet[];
+interface CharacterResponse {
+  results: Character[];
 }
 
 interface MainPageState {
   query: string;
-  results: Planet[];
+  results: Character[];
   loading: boolean;
   error: string | null;
 }
@@ -36,7 +36,7 @@ class MainPage extends React.Component<object, MainPageState> {
     this.setState({ loading: true, error: null });
 
     try {
-      const data = await this.fetchPlanet(this.state.query);
+      const data = await this.fetchCharacter(this.state.query);
       this.setState({ results: data.results, loading: false });
     } catch (error) {
       console.error(error);
@@ -48,7 +48,7 @@ class MainPage extends React.Component<object, MainPageState> {
     }
   };
 
-  fetchPlanet = async (query: string): Promise<PlanetResponse> => {
+  fetchCharacter = async (query: string): Promise<CharacterResponse> => {
     let lastError: unknown;
 
     for (const apiUrl of API_URLS) {
@@ -63,7 +63,7 @@ class MainPage extends React.Component<object, MainPageState> {
           throw new Error(`Request failed with status ${response.status}`);
         }
 
-        return (await response.json()) as PlanetResponse;
+        return (await response.json()) as CharacterResponse;
       } catch (error) {
         lastError = error;
         console.error(`Error fetching from ${apiUrl}: `, error);
