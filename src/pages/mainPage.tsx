@@ -94,7 +94,7 @@ class MainPage extends React.Component<object, MainPageState> {
       }
     }
 
-    throw lastError ?? new Error('Failed to fetch planets.');
+    throw lastError ?? new Error('Failed to fetch characters.');
   };
 
   render() {

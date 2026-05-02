@@ -1,24 +1,44 @@
 import React from 'react';
 
 interface TestButtonState {
-  shouldThrowError: boolean;
+  error: Error | null;
 }
 
 class TestButton extends React.Component<object, TestButtonState> {
   state: TestButtonState = {
-    shouldThrowError: false,
+    error: null,
+  };
+
+  triggerNetworkError = async () => {
+    try {
+      const response = await fetch(
+        'https://rickandmortyapi.com/api/invalid-endpoint'
+      );
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      await response.json();
+    } catch (error) {
+      if (error instanceof Error) {
+        this.setState({ error });
+      } else {
+        this.setState({ error: new Error('Request failed') });
+      }
+    }
   };
 
   render() {
-    if (this.state.shouldThrowError) {
-      throw new Error('Test application error');
+    if (this.state.error) {
+      throw this.state.error;
     }
 
     return (
       <button
         type="button"
         className="flex self-center justify-center w-40 rounded-lg bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 duration-150 ease-in-out cursor-pointer active:bg-slate-700"
-        onClick={() => this.setState({ shouldThrowError: true })}
+        onClick={this.triggerNetworkError}
       >
         Test Button
       </button>

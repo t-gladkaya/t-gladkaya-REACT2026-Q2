@@ -4,21 +4,13 @@ import type { Character } from './Card';
 import PreLoader from './PreLoader';
 import ErrorFallback from './ErrorFallback';
 
-interface CharacterResults {
-  count: number;
-  results: Character[];
-}
-
 interface ResultsSectionProps {
   results: Character[];
   loading: boolean;
   error?: Error | null;
 }
 
-class ResultsSection extends React.Component<
-  ResultsSectionProps,
-  CharacterResults
-> {
+class ResultsSection extends React.Component<ResultsSectionProps> {
   render() {
     const { results, loading, error } = this.props;
 
@@ -34,7 +26,9 @@ class ResultsSection extends React.Component<
             ) : error ? (
               <ErrorFallback error={error} />
             ) : results.length === 0 ? (
-              <div className="text-slate-600">No results</div>
+              <div className="text-slate-600">
+                Nothing found for this search
+              </div>
             ) : (
               <div className="grid justify-items-center gap-5 md:grid-cols-4">
                 {results.map((item) => (
