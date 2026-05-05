@@ -1,4 +1,5 @@
 import React from 'react';
+import ReloadButton from './ReloadButton';
 
 interface ErrorFallbackProps {
   error: Error | null;
@@ -13,6 +14,7 @@ class ErrorFallback extends React.Component<ErrorFallbackProps> {
         <div className="text-mist-600 text-lg font-semibold">
           {error ? error.message : 'An unexpected error occurred.'}
         </div>
+        <ReloadButton />
       </div>
     );
   }

@@ -30,7 +30,7 @@ class ResultsSection extends React.Component<ResultsSectionProps> {
                 Nothing found for this search
               </div>
             ) : (
-              <div className="grid justify-items-center gap-5 md:grid-cols-4">
+              <div className="grid justify-items-center gap-5 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
                 {results.map((item) => (
                   <Card key={item.id} data={item} />
                 ))}
