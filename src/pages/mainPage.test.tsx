@@ -2,66 +2,16 @@ import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
+import { getMainPageStorageMocks } from '../test-utils/mainPageMocks';
 import MainPage from './mainPage';
 
-const mocks = vi.hoisted(() => ({
-  getSavedSearchTerm: vi.fn(),
-  saveSearchTerm: vi.fn(),
-}));
-
-vi.mock('../utils/handleLocalStorage', () => ({
-  getSavedSearchTerm: mocks.getSavedSearchTerm,
-  saveSearchTerm: mocks.saveSearchTerm,
-}));
-
-vi.mock('../components/SearchLine', () => ({
-  default: ({
-    value,
-    onChange,
-    onSearch,
-  }: {
-    value: string;
-    onChange: (query: string) => void;
-    onSearch: () => void;
-  }) => (
-    <div data-testid="search-line">
-      <span data-testid="search-value">{value}</span>
-      <button onClick={() => onChange('rick')}>Change query</button>
-      <button onClick={onSearch}>Search</button>
-    </div>
-  ),
-}));
-
-vi.mock('../components/ResultsSection', () => ({
-  default: ({
-    results,
-    loading,
-    error,
-  }: {
-    results: { id: string; name: string }[];
-    loading: boolean;
-    error: Error | null;
-  }) => (
-    <div data-testid="results-section">
-      <span data-testid="loading">{String(loading)}</span>
-      <span data-testid="error">{error?.message ?? ''}</span>
-      <span data-testid="results-count">{results.length}</span>
-      {results.map((item) => (
-        <span key={item.id}>{item.name}</span>
-      ))}
-    </div>
-  ),
-}));
-
-vi.mock('../components/TestButton', () => ({
-  default: () => <div data-testid="test-button" />,
-}));
+const mainPageStorageMocks = getMainPageStorageMocks();
 
 describe('MainPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    mocks.getSavedSearchTerm.mockReturnValue('');
+    mainPageStorageMocks.getSavedSearchTerm.mockReturnValue('');
 
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
@@ -90,7 +40,7 @@ describe('MainPage', () => {
   });
 
   it('loads saved search term on mount', async () => {
-    mocks.getSavedSearchTerm.mockReturnValue('morty');
+    mainPageStorageMocks.getSavedSearchTerm.mockReturnValue('morty');
 
     render(<MainPage />);
 
@@ -119,7 +69,7 @@ describe('MainPage', () => {
 
     await user.click(screen.getByRole('button', { name: /search/i }));
 
-    expect(mocks.saveSearchTerm).toHaveBeenCalledWith('rick');
+    expect(mainPageStorageMocks.saveSearchTerm).toHaveBeenCalledWith('rick');
 
     await waitFor(() => {
       expect(fetch).toHaveBeenCalledWith(
@@ -167,7 +117,7 @@ describe('MainPage', () => {
   });
 
   it('does not fetch again when searching the same query twice', async () => {
-    mocks.getSavedSearchTerm.mockReturnValue('rick');
+    mainPageStorageMocks.getSavedSearchTerm.mockReturnValue('rick');
 
     const user = userEvent.setup();
 
