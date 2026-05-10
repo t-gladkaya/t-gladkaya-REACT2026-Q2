@@ -40,4 +40,23 @@ describe('TestButton', () => {
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
+
+  it('shows default request failed message when caught value is not an Error', async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockRejectedValue('Request failed');
+
+    const user = userEvent.setup();
+
+    render(
+      <ErrorBoundary>
+        <TestButton />
+      </ErrorBoundary>
+    );
+
+    await user.click(screen.getByRole('button', { name: /test button/i }));
+
+    expect(await screen.findByText(/^request failed$/i)).toBeInTheDocument();
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
 });

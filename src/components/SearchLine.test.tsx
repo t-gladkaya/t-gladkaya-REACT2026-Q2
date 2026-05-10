@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import '@testing-library/jest-dom';
@@ -27,5 +27,24 @@ describe('SearchLine component', () => {
 
     await user.click(button);
     expect(mockOnSearch).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders empty input when value is not provided', () => {
+    render(<SearchLine onChange={vi.fn()} onSearch={vi.fn()} />);
+
+    expect(screen.getByRole('textbox')).toHaveValue('');
+  });
+
+  it('calls onChange when user types in input', async () => {
+    const mockOnChange = vi.fn();
+
+    render(<SearchLine value="" onChange={mockOnChange} onSearch={vi.fn()} />);
+
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: 'rick' },
+    });
+
+    expect(mockOnChange).toHaveBeenCalled();
+    expect(mockOnChange).toHaveBeenCalledWith('rick');
   });
 });

@@ -94,7 +94,9 @@ describe('MainPage', () => {
 
     render(<MainPage />);
 
-    expect(await screen.getByTestId('search-value')).toHaveTextContent('morty');
+    expect(await screen.findByTestId('search-value')).toHaveTextContent(
+      'morty'
+    );
   });
 
   it('updates query when SearchLine calls onChange', async () => {
@@ -113,6 +115,8 @@ describe('MainPage', () => {
     render(<MainPage />);
 
     await user.click(screen.getByRole('button', { name: /change query/i }));
+    await screen.findByText('rick');
+
     await user.click(screen.getByRole('button', { name: /search/i }));
 
     expect(mocks.saveSearchTerm).toHaveBeenCalledWith('rick');
@@ -147,5 +151,36 @@ describe('MainPage', () => {
     expect(
       await screen.findByText(/something went wrong while loading results/i)
     ).toBeInTheDocument();
+  });
+
+  it('passes error to ResultsSection when API returns non-ok response', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+    }) as unknown as typeof fetch;
+
+    render(<MainPage />);
+
+    expect(
+      await screen.findByText(/something went wrong while loading results/i)
+    ).toBeInTheDocument();
+  });
+
+  it('does not fetch again when searching the same query twice', async () => {
+    mocks.getSavedSearchTerm.mockReturnValue('rick');
+
+    const user = userEvent.setup();
+
+    render(<MainPage />);
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalled();
+    });
+
+    vi.mocked(fetch).mockClear();
+
+    await user.click(screen.getByRole('button', { name: /search/i }));
+
+    expect(fetch).not.toHaveBeenCalled();
   });
 });
