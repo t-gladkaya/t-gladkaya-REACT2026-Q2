@@ -1,11 +1,11 @@
+import { Outlet } from 'react-router';
 import './App.css';
 import ErrorBoundary from './components/ErrorBoundary';
-import MainPage from './pages/mainPage';
 
 function App() {
   return (
     <ErrorBoundary>
-      <MainPage />
+      <Outlet />
     </ErrorBoundary>
   );
 }
