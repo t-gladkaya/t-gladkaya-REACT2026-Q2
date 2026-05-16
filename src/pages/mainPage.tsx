@@ -4,11 +4,8 @@ import ResultsSection from '../components/ResultsSection';
 import TestButton from '../components/TestButton';
 import type { Character } from '../components/Card';
 import { API_URLS } from '../api/api';
-import {
-  getSavedSearchTerm,
-  saveSearchTerm,
-} from '../utils/handleLocalStorage';
 import { useNavigate } from 'react-router';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 interface CharacterResponse {
   results: Character[];
@@ -52,10 +49,10 @@ const fetchCharacter = async (query: string): Promise<CharacterResponse> => {
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const savedQuery = getSavedSearchTerm().trim();
+  const [savedQuery, saveSearchTerm] = useLocalStorage('lastInput', '');
 
   const [state, setState] = React.useState<MainPageState>({
-    query: savedQuery,
+    query: savedQuery.trim(),
     lastSearchedQuery: '',
     results: [],
     loading: true,

@@ -12,18 +12,6 @@ interface ResultsSectionMockProps {
   error: Error | null;
 }
 
-const mainPageStorageMocks = vi.hoisted(() => ({
-  getSavedSearchTerm: vi.fn(),
-  saveSearchTerm: vi.fn(),
-}));
-
-export const getMainPageStorageMocks = () => mainPageStorageMocks;
-
-vi.mock('../utils/handleLocalStorage', () => ({
-  getSavedSearchTerm: mainPageStorageMocks.getSavedSearchTerm,
-  saveSearchTerm: mainPageStorageMocks.saveSearchTerm,
-}));
-
 vi.mock('../components/SearchLine', () => ({
   default: ({ value, onChange, onSearch }: SearchLineMockProps) => (
     <div data-testid="search-line">

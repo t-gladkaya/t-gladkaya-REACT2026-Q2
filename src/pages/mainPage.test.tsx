@@ -3,10 +3,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { vi } from 'vitest';
-import { getMainPageStorageMocks } from '../test-utils/mainPageMocks';
+import '../test-utils/mainPageMocks';
 import MainPage from './mainPage';
-
-const mainPageStorageMocks = getMainPageStorageMocks();
 
 const renderMainPage = () =>
   render(
@@ -18,8 +16,7 @@ const renderMainPage = () =>
 describe('MainPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
-    mainPageStorageMocks.getSavedSearchTerm.mockReturnValue('');
+    localStorage.clear();
 
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
@@ -48,7 +45,7 @@ describe('MainPage', () => {
   });
 
   it('loads saved search term on mount', async () => {
-    mainPageStorageMocks.getSavedSearchTerm.mockReturnValue('morty');
+    localStorage.setItem('lastInput', 'morty');
 
     renderMainPage();
 
@@ -77,7 +74,7 @@ describe('MainPage', () => {
 
     await user.click(screen.getByRole('button', { name: /search/i }));
 
-    expect(mainPageStorageMocks.saveSearchTerm).toHaveBeenCalledWith('rick');
+    expect(localStorage.getItem('lastInput')).toBe('rick');
 
     await waitFor(() => {
       expect(fetch).toHaveBeenCalledWith(
@@ -125,7 +122,7 @@ describe('MainPage', () => {
   });
 
   it('does not fetch again when searching the same query twice', async () => {
-    mainPageStorageMocks.getSavedSearchTerm.mockReturnValue('rick');
+    localStorage.setItem('lastInput', 'rick');
 
     const user = userEvent.setup();
 
