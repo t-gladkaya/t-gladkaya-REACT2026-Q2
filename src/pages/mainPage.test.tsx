@@ -1,11 +1,19 @@
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router';
 import { vi } from 'vitest';
 import { getMainPageStorageMocks } from '../test-utils/mainPageMocks';
 import MainPage from './mainPage';
 
 const mainPageStorageMocks = getMainPageStorageMocks();
+
+const renderMainPage = () =>
+  render(
+    <MemoryRouter>
+      <MainPage />
+    </MemoryRouter>
+  );
 
 describe('MainPage', () => {
   beforeEach(() => {
@@ -32,7 +40,7 @@ describe('MainPage', () => {
   });
 
   it('renders child components', () => {
-    render(<MainPage />);
+    renderMainPage();
 
     expect(screen.getByTestId('search-line')).toBeInTheDocument();
     expect(screen.getByTestId('results-section')).toBeInTheDocument();
@@ -42,7 +50,7 @@ describe('MainPage', () => {
   it('loads saved search term on mount', async () => {
     mainPageStorageMocks.getSavedSearchTerm.mockReturnValue('morty');
 
-    render(<MainPage />);
+    renderMainPage();
 
     expect(await screen.findByTestId('search-value')).toHaveTextContent(
       'morty'
@@ -52,7 +60,7 @@ describe('MainPage', () => {
   it('updates query when SearchLine calls onChange', async () => {
     const user = userEvent.setup();
 
-    render(<MainPage />);
+    renderMainPage();
 
     await user.click(screen.getByRole('button', { name: /change query/i }));
 
@@ -62,7 +70,7 @@ describe('MainPage', () => {
   it('saves query and fetches results after search', async () => {
     const user = userEvent.setup();
 
-    render(<MainPage />);
+    renderMainPage();
 
     await user.click(screen.getByRole('button', { name: /change query/i }));
     await screen.findByText('rick');
@@ -86,7 +94,7 @@ describe('MainPage', () => {
       status: 404,
     }) as unknown as typeof fetch;
 
-    render(<MainPage />);
+    renderMainPage();
 
     await waitFor(() => {
       expect(screen.getByTestId('results-count')).toHaveTextContent('0');
@@ -96,7 +104,7 @@ describe('MainPage', () => {
   it('passes error to ResultsSection when request fails', async () => {
     globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
 
-    render(<MainPage />);
+    renderMainPage();
 
     expect(
       await screen.findByText(/something went wrong while loading results/i)
@@ -109,7 +117,7 @@ describe('MainPage', () => {
       status: 500,
     }) as unknown as typeof fetch;
 
-    render(<MainPage />);
+    renderMainPage();
 
     expect(
       await screen.findByText(/something went wrong while loading results/i)
@@ -121,10 +129,20 @@ describe('MainPage', () => {
 
     const user = userEvent.setup();
 
-    render(<MainPage />);
+    renderMainPage();
 
     await waitFor(() => {
       expect(fetch).toHaveBeenCalled();
+    });
+
+    vi.mocked(fetch).mockClear();
+
+    await user.click(screen.getByRole('button', { name: /search/i }));
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith(
+        'https://rickandmortyapi.com/api/character?name=rick'
+      );
     });
 
     vi.mocked(fetch).mockClear();
