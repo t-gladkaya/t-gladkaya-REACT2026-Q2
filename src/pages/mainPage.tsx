@@ -2,12 +2,16 @@ import React from 'react';
 import SearchLine from '../components/SearchLine';
 import ResultsSection from '../components/ResultsSection';
 import TestButton from '../components/TestButton';
+import Pagination from '../components/Pagination';
 import type { Character } from '../components/Card';
 import { API_URLS } from '../api/api';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 interface CharacterResponse {
+  info: {
+    pages: number;
+  };
   results: Character[];
 }
 
@@ -17,21 +21,30 @@ interface MainPageState {
   results: Character[];
   loading: boolean;
   error: Error | null;
+  totalPages: number;
 }
 
-const fetchCharacter = async (query: string): Promise<CharacterResponse> => {
+const fetchCharacter = async (
+  query: string,
+  page: number
+): Promise<CharacterResponse> => {
   let lastError: unknown;
 
   for (const apiUrl of API_URLS) {
     try {
       const trimmedQuery = query.trim();
-      const url = trimmedQuery
-        ? `${apiUrl}?name=${encodeURIComponent(trimmedQuery)}`
-        : apiUrl;
-      const response = await fetch(url);
+
+      const params = new URLSearchParams();
+
+      if (trimmedQuery) {
+        params.set('name', trimmedQuery);
+      }
+      params.set('page', page.toString());
+
+      const response = await fetch(`${apiUrl}?${params.toString()}`);
 
       if (response.status === 404) {
-        return { results: [] };
+        return { results: [], info: { pages: 0 } };
       }
 
       if (!response.ok) {
@@ -50,6 +63,11 @@ const fetchCharacter = async (query: string): Promise<CharacterResponse> => {
 const MainPage = () => {
   const navigate = useNavigate();
   const [savedQuery, saveSearchTerm] = useLocalStorage('lastInput', '');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const pageFromUrl = Number(searchParams.get('page') ?? '1');
+  const currentPage =
+    Number.isNaN(pageFromUrl) || pageFromUrl < 1 ? 1 : pageFromUrl;
 
   const [state, setState] = React.useState<MainPageState>({
     query: savedQuery.trim(),
@@ -57,16 +75,28 @@ const MainPage = () => {
     results: [],
     loading: true,
     error: null,
+    totalPages: 1,
   });
 
-  const { query, results, loading, error } = state;
+  const { query, results, loading, error, totalPages } = state;
+
+  React.useEffect(() => {
+    if (!searchParams.has('page')) {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.set('page', '1');
+      setSearchParams(nextParams);
+    }
+  }, [searchParams, setSearchParams]);
 
   React.useEffect(() => {
     let isCancelled = false;
 
-    const loadFirstPage = async () => {
+    const loadPage = async () => {
       try {
-        const data = await fetchCharacter('');
+        const data = await fetchCharacter(
+          state.lastSearchedQuery ?? '',
+          currentPage
+        );
 
         if (isCancelled) {
           return;
@@ -76,6 +106,7 @@ const MainPage = () => {
           ...prevState,
           results: data.results,
           loading: false,
+          totalPages: data.info.pages,
         }));
       } catch {
         if (isCancelled) {
@@ -91,12 +122,12 @@ const MainPage = () => {
       }
     };
 
-    void loadFirstPage();
+    void loadPage();
 
     return () => {
       isCancelled = true;
     };
-  }, []);
+  }, [currentPage, state.lastSearchedQuery]);
 
   const handleQueryChange = (query: string) => {
     setState((prevState) => ({
@@ -107,6 +138,10 @@ const MainPage = () => {
 
   const handleSearch = async () => {
     const trimmedQuery = state.query.trim();
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set('page', '1');
+    setSearchParams(nextParams);
 
     if (trimmedQuery === state.lastSearchedQuery) {
       return;
@@ -121,22 +156,18 @@ const MainPage = () => {
       error: null,
       lastSearchedQuery: trimmedQuery,
     }));
+  };
 
-    try {
-      const data = await fetchCharacter(trimmedQuery);
-      setState((prevState) => ({
-        ...prevState,
-        results: data.results,
-        loading: false,
-      }));
-    } catch {
-      setState((prevState) => ({
-        ...prevState,
-        results: [],
-        loading: false,
-        error: new Error('Something went wrong while loading results.'),
-      }));
-    }
+  const handlePageChange = (page: number) => {
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set('page', page.toString());
+    setSearchParams(nextParams);
+
+    setState((prevState) => ({
+      ...prevState,
+      loading: true,
+      error: null,
+    }));
   };
 
   return (
@@ -163,6 +194,11 @@ const MainPage = () => {
           onSearch={handleSearch}
         />
         <ResultsSection results={results} loading={loading} error={error} />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
         <TestButton />
       </div>
     </div>

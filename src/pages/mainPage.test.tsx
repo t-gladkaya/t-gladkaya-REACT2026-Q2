@@ -22,6 +22,9 @@ describe('MainPage', () => {
       ok: true,
       status: 200,
       json: async () => ({
+        info: {
+          pages: 2,
+        },
         results: [
           {
             id: '1',
@@ -41,6 +44,7 @@ describe('MainPage', () => {
 
     expect(screen.getByTestId('search-line')).toBeInTheDocument();
     expect(screen.getByTestId('results-section')).toBeInTheDocument();
+    expect(screen.getByTestId('pagination')).toBeInTheDocument();
     expect(screen.getByTestId('test-button')).toBeInTheDocument();
   });
 
@@ -78,7 +82,7 @@ describe('MainPage', () => {
 
     await waitFor(() => {
       expect(fetch).toHaveBeenCalledWith(
-        'https://rickandmortyapi.com/api/character?name=rick'
+        'https://rickandmortyapi.com/api/character?name=rick&page=1'
       );
     });
 
@@ -138,7 +142,7 @@ describe('MainPage', () => {
 
     await waitFor(() => {
       expect(fetch).toHaveBeenCalledWith(
-        'https://rickandmortyapi.com/api/character?name=rick'
+        'https://rickandmortyapi.com/api/character?name=rick&page=1'
       );
     });
 
@@ -147,5 +151,27 @@ describe('MainPage', () => {
     await user.click(screen.getByRole('button', { name: /search/i }));
 
     expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('fetches selected page when pagination changes', async () => {
+    const user = userEvent.setup();
+
+    renderMainPage();
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith(
+        'https://rickandmortyapi.com/api/character?page=1'
+      );
+    });
+
+    vi.mocked(fetch).mockClear();
+
+    await user.click(screen.getByRole('button', { name: '2' }));
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith(
+        'https://rickandmortyapi.com/api/character?page=2'
+      );
+    });
   });
 });

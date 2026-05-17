@@ -36,7 +36,7 @@ const TestButton = () => {
   return (
     <button
       type="button"
-      className="flex self-center justify-center w-40 rounded-lg bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 duration-150 ease-in-out cursor-pointer active:bg-slate-700"
+      className="flex w-32 cursor-pointer justify-center self-end rounded-lg bg-slate-900 px-4 py-1.5 text-xs font-semibold text-white transition duration-150 ease-in-out hover:bg-slate-800 active:bg-slate-700"
       onClick={triggerNetworkError}
     >
       Test Button

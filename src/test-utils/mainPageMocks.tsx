@@ -12,6 +12,12 @@ interface ResultsSectionMockProps {
   error: Error | null;
 }
 
+interface PaginationMockProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
 vi.mock('../components/SearchLine', () => ({
   default: ({ value, onChange, onSearch }: SearchLineMockProps) => (
     <div data-testid="search-line">
@@ -37,4 +43,23 @@ vi.mock('../components/ResultsSection', () => ({
 
 vi.mock('../components/TestButton', () => ({
   default: () => <div data-testid="test-button" />,
+}));
+
+vi.mock('../components/Pagination', () => ({
+  default: ({ currentPage, totalPages, onPageChange }: PaginationMockProps) => (
+    <div data-testid="pagination">
+      <span data-testid="pagination-value">
+        {currentPage} / {totalPages}
+      </span>
+      {Array.from({ length: totalPages }, (_, index) => {
+        const page = index + 1;
+
+        return (
+          <button key={page} type="button" onClick={() => onPageChange(page)}>
+            {page}
+          </button>
+        );
+      })}
+    </div>
+  ),
 }));
