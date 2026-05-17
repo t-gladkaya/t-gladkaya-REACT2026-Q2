@@ -72,46 +72,49 @@ const MainPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto flex min-h-screen max-w-350 gap-6 px-6 py-8">
-        <div
-          className="flex min-w-0 flex-1 flex-col gap-2"
-          onClick={handleMainPanelClick}
+    <div className="h-screen overflow-hidden bg-slate-50 text-slate-900">
+      <div className="mx-auto flex h-screen max-w-350 flex-col gap-2 px-6 py-8">
+        <button
+          type="button"
+          className="group flex w-fit items-center gap-2 self-end overflow-hidden p-1 text-sm font-medium text-slate-600 transition-all duration-300 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300"
+          aria-label="Learn more about the app"
+          onClick={() => navigate('/about')}
         >
-          <button
-            type="button"
-            className="group flex w-fit items-center gap-2 self-end overflow-hidden p-1 text-sm font-medium text-slate-600 transition-all duration-300 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300"
-            aria-label="Learn more about the app"
-            onClick={() => navigate('/about')}
+          <img
+            src="/about-icon.svg"
+            className="h-6 w-6 shrink-0 transition-transform duration-300 group-hover:scale-105"
+            alt="About"
+          />
+          <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-500 group-hover:max-w-48 group-hover:opacity-100 group-focus:max-w-48 group-focus:opacity-100 cursor-pointer">
+            Learn more about the app
+          </span>
+        </button>
+        <SearchLine
+          value={query}
+          onChange={handleQueryChange}
+          onSearch={handleSearch}
+        />
+
+        <div className="flex min-h-0 min-w-0 flex-1 items-stretch gap-6">
+          <div
+            className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            onClick={handleMainPanelClick}
           >
-            <img
-              src="/about-icon.svg"
-              className="h-6 w-6 shrink-0 transition-transform duration-300 group-hover:scale-105"
-              alt="About"
+            <ResultsSection
+              results={results}
+              loading={loading}
+              currentPage={currentPage}
+              error={error}
             />
-            <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-500 group-hover:max-w-48 group-hover:opacity-100 group-focus:max-w-48 group-focus:opacity-100 cursor-pointer">
-              Learn more about the app
-            </span>
-          </button>
-          <SearchLine
-            value={query}
-            onChange={handleQueryChange}
-            onSearch={handleSearch}
-          />
-          <ResultsSection
-            results={results}
-            loading={loading}
-            currentPage={currentPage}
-            error={error}
-          />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-          <TestButton />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+            <TestButton />
+          </div>
+          <Outlet />
         </div>
-        <Outlet />
       </div>
     </div>
   );
