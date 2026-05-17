@@ -1,3 +1,5 @@
+import { Link } from 'react-router';
+
 export interface Character {
   id: string;
   name: string;
@@ -9,13 +11,18 @@ export interface Character {
 
 interface CardProps {
   data: Character;
+  detailsHref: string;
 }
 
 const Card = (props: CardProps) => {
   const { name, status, species, gender, image } = props.data;
+  const { detailsHref } = props;
 
   return (
-    <div className="flex flex-col gap-3 justify-between items-center bg-white rounded-3xl shadow-md w-full max-w-60 hover:translate-1 transition duration-300 ease-in-out pt-5">
+    <Link
+      to={detailsHref}
+      className="flex flex-col gap-3 justify-between items-center bg-white rounded-3xl shadow-md w-full max-w-60 hover:translate-1 transition duration-300 ease-in-out pt-5"
+    >
       <h2 className="text-l font-semibold text-slate-900">{name}</h2>
 
       <div className="flex flex-col gap-1 text-sm text-slate-700">
@@ -36,7 +43,7 @@ const Card = (props: CardProps) => {
           className="w-full rounded-b-lg"
         />
       </div>
-    </div>
+    </Link>
   );
 };
 

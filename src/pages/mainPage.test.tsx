@@ -1,15 +1,17 @@
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, Route, Routes } from 'react-router';
 import { vi } from 'vitest';
 import '../test-utils/mainPageMocks';
 import MainPage from './mainPage';
 
 const renderMainPage = () =>
   render(
-    <MemoryRouter>
-      <MainPage />
+    <MemoryRouter initialEntries={['/page/1']}>
+      <Routes>
+        <Route path="/page/:page" element={<MainPage />} />
+      </Routes>
     </MemoryRouter>
   );
 

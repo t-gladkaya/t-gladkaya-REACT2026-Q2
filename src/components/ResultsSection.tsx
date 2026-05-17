@@ -6,11 +6,12 @@ import ErrorFallback from './ErrorFallback';
 interface ResultsSectionProps {
   results: Character[];
   loading: boolean;
+  currentPage: number;
   error?: Error | null;
 }
 
 const ResultsSection = (props: ResultsSectionProps) => {
-  const { results, loading, error } = props;
+  const { results, loading, currentPage, error } = props;
 
   return (
     <div className="flex-1 rounded-4xl bg-slate-100 p-8 shadow-sm">
@@ -26,9 +27,13 @@ const ResultsSection = (props: ResultsSectionProps) => {
           ) : results.length === 0 ? (
             <div className="text-slate-600">Nothing found for this search</div>
           ) : (
-            <div className="grid justify-items-center gap-5 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] justify-items-center gap-5">
               {results.map((item) => (
-                <Card key={item.id} data={item} />
+                <Card
+                  key={item.id}
+                  data={item}
+                  detailsHref={`/page/${currentPage}/details/${item.id}`}
+                />
               ))}
             </div>
           )}

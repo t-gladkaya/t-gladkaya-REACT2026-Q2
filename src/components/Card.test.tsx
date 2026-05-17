@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { MemoryRouter } from 'react-router';
 import Card, { type Character } from './Card';
 
 const mockCharacter: Character = {
@@ -13,7 +14,11 @@ const mockCharacter: Character = {
 
 describe('Card component', () => {
   it('renders character information correctly', () => {
-    render(<Card data={mockCharacter} />);
+    render(
+      <MemoryRouter>
+        <Card data={mockCharacter} detailsHref="/page/1/details/1" />
+      </MemoryRouter>
+    );
 
     expect(
       screen.getByRole('heading', { name: /rick sanchez/i })
@@ -32,5 +37,9 @@ describe('Card component', () => {
     const image = screen.getByRole('img', { name: /character image/i });
     expect(image).toBeInTheDocument();
     expect(image).toHaveAttribute('src', mockCharacter.image);
+    expect(screen.getByRole('link')).toHaveAttribute(
+      'href',
+      '/page/1/details/1'
+    );
   });
 });
