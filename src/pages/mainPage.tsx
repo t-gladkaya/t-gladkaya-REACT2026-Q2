@@ -2,118 +2,122 @@ import React from 'react';
 import SearchLine from '../components/SearchLine';
 import ResultsSection from '../components/ResultsSection';
 import TestButton from '../components/TestButton';
-import type { Character } from '../components/Card';
-import { API_URLS } from '../api/api';
-import {
-  getSavedSearchTerm,
-  saveSearchTerm,
-} from '../utils/handleLocalStorage';
-
-interface CharacterResponse {
-  results: Character[];
-}
+import Pagination from '../components/Pagination';
+import { useNavigate, useParams, Outlet } from 'react-router';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useCharacters } from '../hooks/useCharacters';
 
 interface MainPageState {
   query: string;
   lastSearchedQuery: string | null;
-  results: Character[];
-  loading: boolean;
-  error: Error | null;
 }
 
-class MainPage extends React.Component<object, MainPageState> {
-  state: MainPageState = {
-    query: '',
-    lastSearchedQuery: null,
-    results: [],
-    loading: false,
-    error: null,
+const MainPage = () => {
+  const navigate = useNavigate();
+  const [savedQuery, saveSearchTerm] = useLocalStorage('lastInput', '');
+  const { page } = useParams();
+
+  const pageFromUrl = Number(page ?? '1');
+  const currentPage =
+    Number.isNaN(pageFromUrl) || pageFromUrl < 1 ? 1 : pageFromUrl;
+
+  const [state, setState] = React.useState<MainPageState>({
+    query: savedQuery.trim(),
+    lastSearchedQuery: '',
+  });
+
+  const { query, lastSearchedQuery } = state;
+  const { results, loading, error, totalPages } = useCharacters(
+    lastSearchedQuery ?? '',
+    currentPage
+  );
+
+  const handleQueryChange = (query: string) => {
+    setState((prevState) => ({
+      ...prevState,
+      query,
+    }));
   };
 
-  componentDidMount() {
-    const savedQuery = getSavedSearchTerm().trim();
+  const handleSearch = async () => {
+    const trimmedQuery = state.query.trim();
 
-    this.setState({ query: savedQuery }, () => {
-      void this.handleSearch();
-    });
-  }
+    navigate('/page/1');
 
-  handleQueryChange = (query: string) => {
-    this.setState({ query });
-  };
-
-  handleSearch = async () => {
-    const trimmedQuery = this.state.query.trim();
-
-    if (trimmedQuery === this.state.lastSearchedQuery) {
+    if (trimmedQuery === state.lastSearchedQuery) {
       return;
     }
 
     saveSearchTerm(trimmedQuery);
-    this.setState({
+
+    setState((prevState) => ({
+      ...prevState,
       query: trimmedQuery,
-      loading: true,
-      error: null,
       lastSearchedQuery: trimmedQuery,
-    });
-
-    try {
-      const data = await this.fetchCharacter(trimmedQuery);
-      this.setState({ results: data.results, loading: false });
-    } catch {
-      this.setState({
-        results: [],
-        loading: false,
-        error: new Error('Something went wrong while loading results.'),
-      });
-    }
+    }));
   };
 
-  fetchCharacter = async (query: string): Promise<CharacterResponse> => {
-    let lastError: unknown;
-
-    for (const apiUrl of API_URLS) {
-      try {
-        const trimmedQuery = query.trim();
-        const url = trimmedQuery
-          ? `${apiUrl}?name=${encodeURIComponent(trimmedQuery)}`
-          : apiUrl;
-        const response = await fetch(url);
-
-        if (response.status === 404) {
-          return { results: [] };
-        }
-
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-
-        return (await response.json()) as CharacterResponse;
-      } catch (error) {
-        lastError = error;
-      }
-    }
-
-    throw lastError ?? new Error('Failed to fetch characters.');
+  const handlePageChange = (page: number) => {
+    navigate(`/page/${page}`);
   };
 
-  render() {
-    const { query, results, loading, error } = this.state;
+  const handleMainPanelClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement;
 
-    return (
-      <div className="min-h-screen bg-slate-50 text-slate-900">
-        <div className="mx-auto flex min-h-screen max-w-295 flex-col gap-8 px-6 py-8">
-          <SearchLine
-            value={query}
-            onChange={this.handleQueryChange}
-            onSearch={this.handleSearch}
+    if (target.closest('a, button, input')) {
+      return;
+    }
+
+    navigate(`/page/${currentPage}`);
+  };
+
+  return (
+    <div className="h-screen overflow-hidden bg-slate-50 text-slate-900">
+      <div className="mx-auto flex h-screen max-w-350 flex-col gap-2 px-6 py-4">
+        <button
+          type="button"
+          className="group flex w-fit items-center gap-2 self-end overflow-hidden p-1 text-sm font-medium text-slate-600 transition-all duration-300 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300"
+          aria-label="Learn more about the app"
+          onClick={() => navigate('/about')}
+        >
+          <img
+            src="/about-icon.svg"
+            className="h-6 w-6 shrink-0 transition-transform duration-300 group-hover:scale-105"
+            alt="About"
           />
-          <ResultsSection results={results} loading={loading} error={error} />
-          <TestButton />
+          <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-500 group-hover:max-w-48 group-hover:opacity-100 group-focus:max-w-48 group-focus:opacity-100 cursor-pointer">
+            Learn more about the app
+          </span>
+        </button>
+        <SearchLine
+          value={query}
+          onChange={handleQueryChange}
+          onSearch={handleSearch}
+        />
+
+        <div className="flex min-h-0 min-w-0 flex-1 items-stretch gap-6">
+          <div
+            className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            onClick={handleMainPanelClick}
+          >
+            <ResultsSection
+              results={results}
+              loading={loading}
+              currentPage={currentPage}
+              error={error}
+            />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+            <TestButton />
+          </div>
+          <Outlet />
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default MainPage;
