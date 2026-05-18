@@ -119,7 +119,7 @@ const DetailsPanel = () => {
         <button
           type="button"
           onClick={handleClose}
-          className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-800 active:bg-slate-700"
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-800 active:bg-slate-700 cursor-pointer"
           aria-label="Close details"
         >
           x
