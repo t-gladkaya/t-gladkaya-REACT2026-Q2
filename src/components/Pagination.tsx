@@ -34,7 +34,7 @@ const Pagination = (props: PaginationProps) => {
     <div className="flex flex-wrap items-center justify-center gap-1.5 py-2">
       <button
         type="button"
-        className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-sm font-semibold text-white transition duration-150 ease-in-out hover:bg-slate-800 active:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+        className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-sm font-semibold text-white transition duration-150 ease-in-out hover:bg-slate-800 active:bg-slate-700 cursor-pointer disabled:bg-slate-300"
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
         aria-label="Go to previous page"
@@ -59,7 +59,7 @@ const Pagination = (props: PaginationProps) => {
             )}
             <button
               type="button"
-              className={`h-10 min-w-10 rounded-lg px-3 text-sm font-semibold transition duration-150 ease-in-out ${
+              className={`h-10 min-w-10 rounded-lg px-3 text-sm font-semibold cursor-pointer transition duration-150 ease-in-out ${
                 isActive
                   ? 'bg-slate-900 text-white'
                   : 'bg-white text-slate-700 shadow-sm hover:bg-slate-100 active:bg-slate-200'
@@ -75,7 +75,7 @@ const Pagination = (props: PaginationProps) => {
 
       <button
         type="button"
-        className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-sm font-semibold text-white transition duration-150 ease-in-out hover:bg-slate-800 active:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+        className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-sm font-semibold text-white cursor-pointer transition duration-150 ease-in-out hover:bg-slate-800 active:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
         disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
         aria-label="Go to next page"

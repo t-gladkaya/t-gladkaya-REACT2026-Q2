@@ -73,7 +73,7 @@ const MainPage = () => {
 
   return (
     <div className="h-screen overflow-hidden bg-slate-50 text-slate-900">
-      <div className="mx-auto flex h-screen max-w-350 flex-col gap-2 px-6 py-8">
+      <div className="mx-auto flex h-screen max-w-350 flex-col gap-2 px-6 py-4">
         <button
           type="button"
           className="group flex w-fit items-center gap-2 self-end overflow-hidden p-1 text-sm font-medium text-slate-600 transition-all duration-300 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300"
