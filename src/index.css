@@ -60,14 +60,30 @@
   margin: 0 auto;
   text-align: center;
   border-inline: 1px solid var(--border);
+  background: #f8fafc;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 }
 
+html {
+  background: #f8fafc;
+}
+
 body {
   margin: 0;
+  background: #f8fafc;
+}
+
+html.dark,
+.dark body {
+  background: #020617;
+}
+
+.dark #root {
+  background: #020617;
+  border-inline-color: #1e293b;
 }
 
 @layer base {
