@@ -34,7 +34,7 @@ const Pagination = (props: PaginationProps) => {
     <div className="flex flex-wrap items-center justify-center gap-1.5 py-2">
       <button
         type="button"
-        className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-sm font-semibold text-white transition duration-150 ease-in-out hover:bg-slate-800 active:bg-slate-700 cursor-pointer disabled:bg-slate-300"
+        className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-sm font-semibold text-white transition duration-150 ease-in-out hover:bg-slate-800 active:bg-slate-700 cursor-pointer disabled:bg-slate-300 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-white dark:disabled:bg-slate-700 dark:disabled:text-slate-400"
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
         aria-label="Go to previous page"
@@ -52,7 +52,7 @@ const Pagination = (props: PaginationProps) => {
             {hasGap && (
               <span
                 key={`gap-${page}`}
-                className="flex h-10 min-w-6 items-center justify-center text-sm font-semibold text-slate-400"
+                className="flex h-10 min-w-6 items-center justify-center text-sm font-semibold text-slate-400 dark:text-slate-500"
               >
                 ...
               </span>
@@ -61,8 +61,8 @@ const Pagination = (props: PaginationProps) => {
               type="button"
               className={`h-10 min-w-10 rounded-lg px-3 text-sm font-semibold cursor-pointer transition duration-150 ease-in-out ${
                 isActive
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-white text-slate-700 shadow-sm hover:bg-slate-100 active:bg-slate-200'
+                  ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-950'
+                  : 'bg-white text-slate-700 shadow-sm hover:bg-slate-100 active:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700'
               }`}
               aria-current={isActive ? 'page' : undefined}
               onClick={() => onPageChange(page)}
@@ -75,7 +75,7 @@ const Pagination = (props: PaginationProps) => {
 
       <button
         type="button"
-        className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-sm font-semibold text-white cursor-pointer transition duration-150 ease-in-out hover:bg-slate-800 active:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+        className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-sm font-semibold text-white cursor-pointer transition duration-150 ease-in-out hover:bg-slate-800 active:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-white dark:disabled:bg-slate-700 dark:disabled:text-slate-400"
         disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
         aria-label="Go to next page"

@@ -28,7 +28,7 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.error) {
       return (
-        <div className="min-h-screen bg-slate-50 text-slate-900">
+        <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
           <div className="mx-auto flex min-h-screen max-w-295 items-center justify-center px-6 py-8">
             <ErrorFallback error={this.state.error} />
           </div>
