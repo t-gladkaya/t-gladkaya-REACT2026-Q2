@@ -6,16 +6,20 @@ import { vi } from 'vitest';
 import '../test-utils/mainPageMocks';
 import { ThemeProvider } from '../context/ThemeProvider';
 import MainPage from './mainPage';
+import { Provider } from 'react-redux';
+import { store } from '../app/state';
 
 const renderMainPage = () =>
   render(
-    <ThemeProvider>
-      <MemoryRouter initialEntries={['/page/1']}>
-        <Routes>
-          <Route path="/page/:page" element={<MainPage />} />
-        </Routes>
-      </MemoryRouter>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider>
+        <MemoryRouter initialEntries={['/page/1']}>
+          <Routes>
+            <Route path="/page/:page" element={<MainPage />} />
+          </Routes>
+        </MemoryRouter>
+      </ThemeProvider>
+    </Provider>
   );
 
 describe('MainPage', () => {
