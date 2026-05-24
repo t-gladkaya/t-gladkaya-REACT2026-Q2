@@ -7,6 +7,7 @@ import { useNavigate, useParams, Outlet } from 'react-router';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useCharacters } from '../hooks/useCharacters';
 import ThemeSwitcher from '../components/ThemeSwitcher';
+import Flyout from '../components/Flyout';
 interface MainPageState {
   query: string;
   lastSearchedQuery: string | null;
@@ -118,6 +119,7 @@ const MainPage = () => {
           </div>
           <Outlet />
         </div>
+        <Flyout />
       </div>
     </div>
   );
