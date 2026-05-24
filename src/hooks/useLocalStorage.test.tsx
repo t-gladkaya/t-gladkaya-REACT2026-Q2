@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { useLocalStorage } from './useLocalStorage';
 
 const TestComponent = () => {
@@ -35,12 +34,10 @@ describe('useLocalStorage', () => {
     expect(screen.getByTestId('stored-value')).toHaveTextContent('saved');
   });
 
-  it('updates state and localStorage', async () => {
-    const user = userEvent.setup();
-
+  it('updates state and localStorage', () => {
     render(<TestComponent />);
 
-    await user.click(screen.getByRole('button', { name: /update value/i }));
+    fireEvent.click(screen.getByRole('button', { name: /update value/i }));
 
     expect(screen.getByTestId('stored-value')).toHaveTextContent('updated');
     expect(localStorage.getItem('testKey')).toBe('updated');

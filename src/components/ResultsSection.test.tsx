@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router';
+import { Provider } from 'react-redux';
+import { store } from '../app/state';
 import ResultsSection from './ResultsSection';
 import type { Character } from './Card';
 
@@ -8,17 +10,11 @@ const mockResults: Character[] = [
   {
     id: '1',
     name: 'Rick Sanchez',
-    status: 'Alive',
-    species: 'Human',
-    gender: 'Male',
     image: 'https://rickandmortyapi.com/api/character/avatar/1.jpeg',
   },
   {
     id: '2',
     name: 'Morty Smith',
-    status: 'Alive',
-    species: 'Human',
-    gender: 'Male',
     image: 'https://rickandmortyapi.com/api/character/avatar/2.jpeg',
   },
 ];
@@ -69,14 +65,16 @@ describe('ResultsSection', () => {
 
   it('displays results correctly', () => {
     render(
-      <MemoryRouter>
-        <ResultsSection
-          results={mockResults}
-          loading={false}
-          currentPage={2}
-          error={null}
-        />
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter>
+          <ResultsSection
+            results={mockResults}
+            loading={false}
+            currentPage={2}
+            error={null}
+          />
+        </MemoryRouter>
+      </Provider>
     );
 
     expect(
