@@ -84,7 +84,7 @@ const MainPage = () => {
           >
             <img
               src="/about-icon.svg"
-              className="h-6 w-6 shrink-0 transition-transform duration-300 group-hover:scale-105"
+              className="h-6 w-6 shrink-0 transition-transform duration-300 group-hover:scale-105 dark:invert"
               alt="About"
             />
             <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-500 group-hover:max-w-48 group-hover:opacity-100 group-focus:max-w-48 group-focus:opacity-100 cursor-pointer">
