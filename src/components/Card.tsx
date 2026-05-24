@@ -40,7 +40,7 @@ const Card = (props: CardProps) => {
   return (
     <Link
       to={detailsHref}
-      className="flex flex-col gap-3 justify-between items-center bg-white rounded-3xl shadow-md w-full max-w-60 hover:translate-1 transition duration-300 ease-in-out pt-5 dark:bg-slate-800 dark:shadow-slate-950/40"
+      className="relative flex flex-col gap-3 justify-between items-center bg-white rounded-3xl shadow-md w-full max-w-60 hover:translate-1 transition duration-300 ease-in-out pt-10 dark:bg-slate-800 dark:shadow-slate-950/40"
     >
       <input
         type="checkbox"
@@ -48,6 +48,7 @@ const Card = (props: CardProps) => {
         onChange={handleSelectChange}
         onClick={(event) => event.stopPropagation()}
         aria-label={`Select ${name}`}
+        className="absolute right-4 top-4 h-5 w-5 cursor-pointer rounded border-slate-300 accent-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 dark:border-slate-600 dark:accent-slate-100 dark:focus:ring-slate-500 dark:focus:ring-offset-slate-800"
       />
 
       <h2 className="line-clamp-2 px-4 text-center text-lg leading-tight text-black-500 dark:text-white">
