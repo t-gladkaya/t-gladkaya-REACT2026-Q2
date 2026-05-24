@@ -19,7 +19,7 @@ const Flyout = () => {
   };
 
   return (
-    <div className="sticky bottom-0 h-15 rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-md transition-colors duration-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:shadow-slate-950/40">
+    <div className="sticky bottom-0 h-15 animate-[flyoutIn_220ms_ease-out] rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-md transition-colors duration-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:shadow-slate-950/40">
       <div className="flex h-full items-center justify-center gap-10">
         <div className="text-sm font-medium">
           {' '}
