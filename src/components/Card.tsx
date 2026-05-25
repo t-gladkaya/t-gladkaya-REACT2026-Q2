@@ -11,6 +11,17 @@ export interface Character {
   id: string;
   name: string;
   image: string;
+  status?: string;
+  species?: string;
+  type?: string;
+  gender?: string;
+  origin?: {
+    name: string;
+  };
+  location?: {
+    name: string;
+  };
+  detailsUrl?: string;
 }
 
 interface CardProps {
@@ -31,7 +42,7 @@ const Card = (props: CardProps) => {
     event.stopPropagation();
 
     if (event.target.checked) {
-      dispatch(selectItem(props.data));
+      dispatch(selectItem({ ...props.data, detailsUrl: detailsHref }));
     } else {
       dispatch(unselectItem(id));
     }

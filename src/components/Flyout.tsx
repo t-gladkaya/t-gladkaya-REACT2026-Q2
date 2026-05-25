@@ -18,18 +18,36 @@ const Flyout = () => {
     dispatch(clearSelectedItems());
   };
 
-  const escapeCsvValue = (value: string | number) => {
-    const escapedValue = String(value).replaceAll('"', '""');
+  const escapeCsvValue = (value: string | number | undefined) => {
+    const escapedValue = String(value ?? '').replaceAll('"', '""');
 
     return `"${escapedValue}"`;
   };
 
   const handleDownload = () => {
-    const csvHeaders = ['id', 'name', 'image'];
+    const csvHeaders = [
+      'id',
+      'name',
+      'status',
+      'species',
+      'type',
+      'gender',
+      'origin',
+      'location',
+      'detailsUrl',
+      'image',
+    ];
 
     const csvRows = selectedItems.map((item) => [
       item.id,
       item.name,
+      item.status,
+      item.species,
+      item.type,
+      item.gender,
+      item.origin?.name,
+      item.location?.name,
+      item.detailsUrl,
       item.image,
     ]);
 
@@ -48,13 +66,7 @@ const Flyout = () => {
     link.download = `${selectedCount}_items.csv`;
     link.style.display = 'none';
     document.body.appendChild(link);
-    link.dispatchEvent(
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window,
-      })
-    );
+    link.click();
 
     setTimeout(() => {
       link.remove();
