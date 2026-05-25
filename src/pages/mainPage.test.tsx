@@ -4,15 +4,22 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { vi } from 'vitest';
 import '../test-utils/mainPageMocks';
+import { ThemeProvider } from '../context/ThemeProvider';
 import MainPage from './mainPage';
+import { Provider } from 'react-redux';
+import { store } from '../app/state';
 
 const renderMainPage = () =>
   render(
-    <MemoryRouter initialEntries={['/page/1']}>
-      <Routes>
-        <Route path="/page/:page" element={<MainPage />} />
-      </Routes>
-    </MemoryRouter>
+    <Provider store={store}>
+      <ThemeProvider>
+        <MemoryRouter initialEntries={['/page/1']}>
+          <Routes>
+            <Route path="/page/:page" element={<MainPage />} />
+          </Routes>
+        </MemoryRouter>
+      </ThemeProvider>
+    </Provider>
   );
 
 describe('MainPage', () => {

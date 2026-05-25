@@ -110,16 +110,16 @@ const DetailsPanel = () => {
     : [];
 
   return (
-    <aside className="h-full w-90 shrink-0 overflow-hidden rounded-3xl bg-white p-4 shadow-md transition-all duration-300 ease-out animate-[slideIn_250ms_ease-out]">
+    <aside className="h-full w-90 shrink-0 overflow-hidden rounded-3xl bg-white p-4 shadow-md transition-all duration-300 ease-out animate-[slideIn_250ms_ease-out] dark:bg-slate-900 dark:shadow-slate-950/40">
       <div className="mb-2 flex items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-slate-900">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
           Character details
         </h2>
 
         <button
           type="button"
           onClick={handleClose}
-          className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-800 active:bg-slate-700 cursor-pointer"
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-800 active:bg-slate-700 cursor-pointer dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-white"
           aria-label="Close details"
         >
           x
@@ -127,14 +127,14 @@ const DetailsPanel = () => {
       </div>
 
       {loading ? (
-        <div className="text-sm text-slate-600">
+        <div className="text-sm text-slate-600 dark:text-slate-300">
           <PreLoader />
         </div>
       ) : error ? (
         <p className="text-sm text-red-600">{error.message}</p>
       ) : character ? (
         <div className="flex h-[calc(100%-2.5rem)] flex-col">
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-100 bg-slate-50 shadow-sm">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-100 bg-slate-50 shadow-sm dark:border-slate-700 dark:bg-slate-800">
             <img
               src={character.image}
               alt={character.name}
@@ -142,17 +142,19 @@ const DetailsPanel = () => {
             />
 
             <div className="min-h-0 p-3">
-              <h3 className="truncate text-base font-semibold leading-tight text-slate-900">
+              <h3 className="truncate text-base font-semibold leading-tight text-slate-900 dark:text-slate-100">
                 {character.name}
               </h3>
 
-              <dl className="mt-2 grid gap-1.5 text-xs text-slate-700">
+              <dl className="mt-2 grid gap-1.5 text-xs text-slate-700 dark:text-slate-300">
                 {details.map(([label, value]) => (
                   <div
                     key={label}
                     className="grid grid-cols-[4.5rem_1fr] gap-2 leading-tight text-lte"
                   >
-                    <dt className="font-semibold text-slate-900">{label}</dt>
+                    <dt className="font-semibold text-slate-900 dark:text-slate-100">
+                      {label}
+                    </dt>
                     <dd className="min-w-0 truncate">{value}</dd>
                   </div>
                 ))}
@@ -161,7 +163,9 @@ const DetailsPanel = () => {
           </div>
         </div>
       ) : (
-        <p className="text-sm text-slate-600">No details found.</p>
+        <p className="text-sm text-slate-600 dark:text-slate-300">
+          No details found.
+        </p>
       )}
     </aside>
   );

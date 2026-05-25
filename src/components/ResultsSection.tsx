@@ -14,7 +14,7 @@ const ResultsSection = (props: ResultsSectionProps) => {
   const { results, loading, currentPage, error } = props;
 
   return (
-    <div className="flex-1 rounded-4xl bg-slate-100 p-8 shadow-sm">
+    <div className="flex-1 rounded-4xl bg-slate-100 p-8 shadow-sm transition-colors duration-300 dark:bg-slate-900">
       <div className="h-full flex flex-col items-center gap-5">
         <div>
           <img src="/star-icon.png" alt="star-icon" className="w-10" />
@@ -25,7 +25,9 @@ const ResultsSection = (props: ResultsSectionProps) => {
           ) : error ? (
             <ErrorFallback error={error} />
           ) : results.length === 0 ? (
-            <div className="text-slate-600">Nothing found for this search</div>
+            <div className="text-slate-600 dark:text-slate-300">
+              Nothing found for this search
+            </div>
           ) : (
             <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] justify-items-center gap-5">
               {results.map((item) => (

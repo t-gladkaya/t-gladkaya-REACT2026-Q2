@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router';
+import { Provider } from 'react-redux';
+import { store } from '../app/state';
 import Card, { type Character } from './Card';
 
 const mockCharacter: Character = {
@@ -12,9 +14,11 @@ const mockCharacter: Character = {
 describe('Card component', () => {
   it('renders character information correctly', () => {
     render(
-      <MemoryRouter>
-        <Card data={mockCharacter} detailsHref="/page/1/details/1" />
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter>
+          <Card data={mockCharacter} detailsHref="/page/1/details/1" />
+        </MemoryRouter>
+      </Provider>
     );
 
     expect(
