@@ -46,14 +46,17 @@ const selectedItemsSlice = createSlice({
 export const { selectItem, unselectItem, clearSelectedItems } =
   selectedItemsSlice.actions;
 
-export const store = configureStore({
-  reducer: {
-    selectedItems: selectedItemsSlice.reducer,
-    [mainApi.reducerPath]: mainApi.reducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(mainApi.middleware),
-});
+export const createAppStore = () =>
+  configureStore({
+    reducer: {
+      selectedItems: selectedItemsSlice.reducer,
+      [mainApi.reducerPath]: mainApi.reducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(mainApi.middleware),
+  });
+
+export const store = createAppStore();
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

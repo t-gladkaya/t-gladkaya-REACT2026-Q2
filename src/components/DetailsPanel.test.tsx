@@ -3,6 +3,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, vi } from 'vitest';
+import { Provider } from 'react-redux';
+import { createAppStore } from '../app/state';
 import DetailsPanel from './DetailsPanel';
 
 const character = {
@@ -25,13 +27,31 @@ const character = {
 
 const renderDetailsPanel = (initialPath = '/page/3/details/1') =>
   render(
-    <MemoryRouter initialEntries={[initialPath]}>
-      <Routes>
-        <Route path="/page/:page" element={<div>Main page</div>} />
-        <Route path="/page/:page/details/:id" element={<DetailsPanel />} />
-      </Routes>
-    </MemoryRouter>
+    <Provider store={createAppStore()}>
+      <MemoryRouter initialEntries={[initialPath]}>
+        <Routes>
+          <Route path="/page/:page" element={<div>Main page</div>} />
+          <Route path="/page/:page/details/:id" element={<DetailsPanel />} />
+        </Routes>
+      </MemoryRouter>
+    </Provider>
   );
+
+const response = (body: unknown, init?: ResponseInit) =>
+  new Response(JSON.stringify(body), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    ...init,
+  });
+
+const getFetchUrls = () =>
+  vi
+    .mocked(fetch)
+    .mock.calls.map(([request]) =>
+      request instanceof Request ? request.url : String(request)
+    );
 
 describe('DetailsPanel', () => {
   afterEach(() => {
@@ -51,11 +71,9 @@ describe('DetailsPanel', () => {
   });
 
   it('fetches and renders character details', async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: async () => character,
-    }) as unknown as typeof fetch;
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(response(character)) as unknown as typeof fetch;
 
     renderDetailsPanel();
 
@@ -78,7 +96,7 @@ describe('DetailsPanel', () => {
     expect(screen.getByText('2')).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(
+      expect(getFetchUrls()).toContain(
         'https://rickandmortyapi.com/api/character/1'
       );
     });
@@ -97,11 +115,9 @@ describe('DetailsPanel', () => {
   it('navigates back to current page when close button is clicked', async () => {
     const user = userEvent.setup();
 
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: async () => character,
-    }) as unknown as typeof fetch;
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(response(character)) as unknown as typeof fetch;
 
     renderDetailsPanel();
 

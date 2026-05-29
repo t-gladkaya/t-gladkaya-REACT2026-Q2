@@ -7,11 +7,42 @@ import '../test-utils/mainPageMocks';
 import { ThemeProvider } from '../context/ThemeProvider';
 import MainPage from './mainPage';
 import { Provider } from 'react-redux';
-import { store } from '../app/state';
+import { createAppStore } from '../app/state';
+
+const response = (body: unknown, init?: ResponseInit) =>
+  new Response(JSON.stringify(body), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    ...init,
+  });
+
+const expectFetchUrl = (
+  expectedUrl: string,
+  expectedParams: Record<string, string>
+) => {
+  const urls = vi.mocked(fetch).mock.calls.map(([request]) => {
+    const url = request instanceof Request ? request.url : String(request);
+    return new URL(url);
+  });
+
+  expect(
+    urls.some((url) => {
+      if (url.origin + url.pathname !== expectedUrl) {
+        return false;
+      }
+
+      return Object.entries(expectedParams).every(
+        ([key, value]) => url.searchParams.get(key) === value
+      );
+    })
+  ).toBe(true);
+};
 
 const renderMainPage = () =>
   render(
-    <Provider store={store}>
+    <Provider store={createAppStore()}>
       <ThemeProvider>
         <MemoryRouter initialEntries={['/page/1']}>
           <Routes>
@@ -27,10 +58,8 @@ describe('MainPage', () => {
     vi.clearAllMocks();
     localStorage.clear();
 
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: async () => ({
+    globalThis.fetch = vi.fn().mockResolvedValue(
+      response({
         info: {
           pages: 2,
         },
@@ -44,8 +73,8 @@ describe('MainPage', () => {
             image: 'image-url',
           },
         ],
-      }),
-    }) as unknown as typeof fetch;
+      })
+    ) as unknown as typeof fetch;
   });
 
   it('renders child components', () => {
@@ -90,19 +119,21 @@ describe('MainPage', () => {
     expect(localStorage.getItem('lastInput')).toBe('rick');
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(
-        'https://rickandmortyapi.com/api/character?name=rick&page=1'
-      );
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        name: 'rick',
+        page: '1',
+      });
     });
 
     expect(await screen.findByText('Rick Sanchez')).toBeInTheDocument();
   });
 
   it('passes empty results when API returns 404', async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: false,
-      status: 404,
-    }) as unknown as typeof fetch;
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(
+        response({}, { status: 404 })
+      ) as unknown as typeof fetch;
 
     renderMainPage();
 
@@ -150,9 +181,10 @@ describe('MainPage', () => {
     await user.click(screen.getByRole('button', { name: /search/i }));
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(
-        'https://rickandmortyapi.com/api/character?name=rick&page=1'
-      );
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        name: 'rick',
+        page: '1',
+      });
     });
 
     vi.mocked(fetch).mockClear();
@@ -168,9 +200,9 @@ describe('MainPage', () => {
     renderMainPage();
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(
-        'https://rickandmortyapi.com/api/character?page=1'
-      );
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        page: '1',
+      });
     });
 
     vi.mocked(fetch).mockClear();
@@ -178,9 +210,9 @@ describe('MainPage', () => {
     await user.click(screen.getByRole('button', { name: '2' }));
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(
-        'https://rickandmortyapi.com/api/character?page=2'
-      );
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        page: '2',
+      });
     });
   });
 });

@@ -9,7 +9,9 @@ const DetailsPanel = () => {
     data: character,
     isLoading: loading,
     error,
-  } = useGetCharacterByIdQuery(id ?? '');
+  } = useGetCharacterByIdQuery(id!, {
+    skip: !id,
+  });
 
   const handleClose = () => {
     navigate(`/page/${page ?? 1}`);
