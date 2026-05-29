@@ -1,46 +1,27 @@
-import type { Character } from '../components/Card';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type {
+  Character,
+  CharacterResponse,
+  GetCharactersArgs,
+} from '../types/types';
 
-export const API_URLS = ['https://rickandmortyapi.com/api/character'];
+export const mainApi = createApi({
+  reducerPath: 'mainApi',
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://rickandmortyapi.com/api' }),
+  endpoints: (builder) => ({
+    getCharacters: builder.query<CharacterResponse, GetCharactersArgs>({
+      query: ({ query, page }) => ({
+        url: 'character',
+        params: {
+          page,
+          ...(query.trim() ? { name: query.trim() } : {}),
+        },
+      }),
+    }),
+    getCharacterById: builder.query<Character, string>({
+      query: (id) => `character/${id}`,
+    }),
+  }),
+});
 
-interface CharacterResponse {
-  info: {
-    pages: number;
-  };
-  results: Character[];
-}
-
-export const fetchCharacter = async (
-  query: string,
-  page: number
-): Promise<CharacterResponse> => {
-  let lastError: unknown;
-
-  for (const apiUrl of API_URLS) {
-    try {
-      const trimmedQuery = query.trim();
-
-      const params = new URLSearchParams();
-
-      if (trimmedQuery) {
-        params.set('name', trimmedQuery);
-      }
-      params.set('page', page.toString());
-
-      const response = await fetch(`${apiUrl}?${params.toString()}`);
-
-      if (response.status === 404) {
-        return { results: [], info: { pages: 0 } };
-      }
-
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-
-      return (await response.json()) as CharacterResponse;
-    } catch (error) {
-      lastError = error;
-    }
-  }
-
-  throw lastError ?? new Error('Failed to fetch characters.');
-};
+export const { useGetCharactersQuery, useGetCharacterByIdQuery } = mainApi;
