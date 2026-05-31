@@ -58,31 +58,33 @@ describe('MainPage', () => {
     vi.clearAllMocks();
     localStorage.clear();
 
-    globalThis.fetch = vi.fn().mockResolvedValue(
-      response({
-        info: {
-          pages: 2,
-        },
-        results: [
-          {
-            id: '1',
-            name: 'Rick Sanchez',
-            status: 'Alive',
-            species: 'Human',
-            gender: 'Male',
-            image: 'image-url',
+    globalThis.fetch = vi.fn().mockImplementation(() =>
+      Promise.resolve(
+        response({
+          info: {
+            pages: 2,
           },
-        ],
-      })
+          results: [
+            {
+              id: '1',
+              name: 'Rick Sanchez',
+              status: 'Alive',
+              species: 'Human',
+              gender: 'Male',
+              image: 'image-url',
+            },
+          ],
+        })
+      )
     ) as unknown as typeof fetch;
   });
 
-  it('renders child components', () => {
+  it('renders child components', async () => {
     renderMainPage();
 
     expect(screen.getByTestId('search-line')).toBeInTheDocument();
     expect(screen.getByTestId('results-section')).toBeInTheDocument();
-    expect(screen.getByTestId('pagination')).toBeInTheDocument();
+    expect(await screen.findByTestId('pagination')).toBeInTheDocument();
     expect(screen.getByTestId('test-button')).toBeInTheDocument();
   });
 
@@ -140,6 +142,9 @@ describe('MainPage', () => {
     await waitFor(() => {
       expect(screen.getByTestId('results-count')).toHaveTextContent('0');
     });
+
+    expect(screen.getByTestId('error')).toHaveTextContent('');
+    expect(screen.queryByTestId('pagination')).not.toBeInTheDocument();
   });
 
   it('passes error to ResultsSection when request fails', async () => {

@@ -114,11 +114,13 @@ const MainPage = () => {
               currentPage={currentPage}
               error={error}
             />
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
+            {results.length > 0 && !error && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
             <TestButton />
           </div>
           <Outlet />
