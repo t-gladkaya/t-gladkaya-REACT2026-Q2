@@ -8,6 +8,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useCharacters } from '../hooks/useCharacters';
 import ThemeSwitcher from '../components/ThemeSwitcher';
 import Flyout from '../components/Flyout';
+import RefreshButton from '../components/RefreshButton';
 interface MainPageState {
   query: string;
   lastSearchedQuery: string | null;
@@ -76,7 +77,10 @@ const MainPage = () => {
     <div className="h-screen overflow-hidden bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
       <div className="mx-auto flex h-screen max-w-350 flex-col gap-2 px-6 py-4">
         <div className="flex justify-between items-center">
-          <ThemeSwitcher />
+          <div className="flex gap-5">
+            <ThemeSwitcher />
+            <RefreshButton />
+          </div>
           <button
             type="button"
             className="group flex w-fit items-center gap-2 self-end overflow-hidden p-1 text-sm font-medium text-slate-600 transition-all duration-300 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300 dark:text-slate-300 dark:hover:text-white dark:focus:ring-slate-600"
