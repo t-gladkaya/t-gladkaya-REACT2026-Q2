@@ -215,4 +215,58 @@ describe('MainPage', () => {
       });
     });
   });
+
+  it('reuses cached page data when returning to a previously loaded page', async () => {
+    const user = userEvent.setup();
+
+    renderMainPage();
+
+    await waitFor(() => {
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        page: '1',
+      });
+    });
+
+    vi.mocked(fetch).mockClear();
+
+    await user.click(screen.getByRole('button', { name: '2' }));
+
+    await waitFor(() => {
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        page: '2',
+      });
+    });
+
+    vi.mocked(fetch).mockClear();
+
+    await user.click(screen.getByRole('button', { name: '1' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('pagination-value')).toHaveTextContent('1 / 2');
+    });
+
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('refetches current page when refresh button is clicked', async () => {
+    const user = userEvent.setup();
+
+    renderMainPage();
+
+    await waitFor(() => {
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        page: '1',
+      });
+    });
+
+    vi.mocked(fetch).mockClear();
+
+    await user.click(screen.getByRole('button', { name: /refresh data/i }));
+
+    await waitFor(() => {
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        page: '1',
+      });
+    });
+  });
 });
