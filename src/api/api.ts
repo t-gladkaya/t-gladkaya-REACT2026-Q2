@@ -11,6 +11,7 @@ export const mainApi = createApi({
   reducerPath: 'mainApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://rickandmortyapi.com/api' }),
   keepUnusedDataFor: cacheTime,
+  tagTypes: ['Characters', 'Character'],
   endpoints: (builder) => ({
     getCharacters: builder.query<CharacterResponse, GetCharactersArgs>({
       query: ({ query, page }) => ({
@@ -20,9 +21,12 @@ export const mainApi = createApi({
           ...(query.trim() ? { name: query.trim() } : {}),
         },
       }),
+      providesTags: [{ type: 'Characters', id: 'LIST' }],
     }),
+
     getCharacterById: builder.query<Character, string>({
       query: (id) => `character/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'Character', id }],
     }),
 
     testInvalidEndpoint: builder.query<unknown, void>({
