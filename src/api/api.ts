@@ -5,9 +5,12 @@ import type {
   GetCharactersArgs,
 } from '../types/types';
 
+const cacheTime = Number(import.meta.env.VITE_CACHE_TIME ?? 300);
+
 export const mainApi = createApi({
   reducerPath: 'mainApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://rickandmortyapi.com/api' }),
+  keepUnusedDataFor: cacheTime,
   endpoints: (builder) => ({
     getCharacters: builder.query<CharacterResponse, GetCharactersArgs>({
       query: ({ query, page }) => ({
