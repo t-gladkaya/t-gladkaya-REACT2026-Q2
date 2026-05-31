@@ -24,7 +24,15 @@ export const mainApi = createApi({
     getCharacterById: builder.query<Character, string>({
       query: (id) => `character/${id}`,
     }),
+
+    testInvalidEndpoint: builder.query<unknown, void>({
+      query: () => 'invalid-endpoint',
+    }),
   }),
 });
 
-export const { useGetCharactersQuery, useGetCharacterByIdQuery } = mainApi;
+export const {
+  useGetCharactersQuery,
+  useGetCharacterByIdQuery,
+  useLazyTestInvalidEndpointQuery,
+} = mainApi;
