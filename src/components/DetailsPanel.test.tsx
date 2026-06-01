@@ -1,11 +1,12 @@
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes } from 'react-router';
+import { Link, MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, vi } from 'vitest';
 import { Provider } from 'react-redux';
 import { createAppStore } from '../app/state';
 import DetailsPanel from './DetailsPanel';
+import RefreshButton from './RefreshButton';
 
 const character = {
   id: '1',
@@ -32,6 +33,34 @@ const renderDetailsPanel = (initialPath = '/page/3/details/1') =>
         <Routes>
           <Route path="/page/:page" element={<div>Main page</div>} />
           <Route path="/page/:page/details/:id" element={<DetailsPanel />} />
+        </Routes>
+      </MemoryRouter>
+    </Provider>
+  );
+
+const renderDetailsPanelFlow = () =>
+  render(
+    <Provider store={createAppStore()}>
+      <MemoryRouter initialEntries={['/page/3/details/1']}>
+        <Routes>
+          <Route
+            path="/page/:page"
+            element={
+              <div>
+                <div>Main page</div>
+                <Link to="/page/3/details/1">Open details</Link>
+              </div>
+            }
+          />
+          <Route
+            path="/page/:page/details/:id"
+            element={
+              <>
+                <RefreshButton />
+                <DetailsPanel />
+              </>
+            }
+          />
         </Routes>
       </MemoryRouter>
     </Provider>
@@ -125,5 +154,54 @@ describe('DetailsPanel', () => {
     await user.click(screen.getByRole('button', { name: /close details/i }));
 
     expect(screen.getByText('Main page')).toBeInTheDocument();
+  });
+
+  it('reuses cached character details when opening the same details again', async () => {
+    const user = userEvent.setup();
+
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(response(character)) as unknown as typeof fetch;
+
+    renderDetailsPanelFlow();
+
+    expect(await screen.findByText('Rick Sanchez')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /close details/i }));
+    expect(screen.getByText('Main page')).toBeInTheDocument();
+
+    vi.mocked(fetch).mockClear();
+
+    await user.click(screen.getByRole('link', { name: /open details/i }));
+
+    expect(await screen.findByText('Rick Sanchez')).toBeInTheDocument();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('refetches active character details when refresh button is clicked', async () => {
+    const user = userEvent.setup();
+
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(response(character)) as unknown as typeof fetch;
+
+    renderDetailsPanelFlow();
+
+    await waitFor(() => {
+      expect(getFetchUrls()).toContain(
+        'https://rickandmortyapi.com/api/character/1'
+      );
+    });
+    expect(await screen.findByText('Rick Sanchez')).toBeInTheDocument();
+
+    vi.mocked(fetch).mockClear();
+
+    await user.click(screen.getByRole('button', { name: /refresh data/i }));
+
+    await waitFor(() => {
+      expect(getFetchUrls()).toContain(
+        'https://rickandmortyapi.com/api/character/1'
+      );
+    });
   });
 });
