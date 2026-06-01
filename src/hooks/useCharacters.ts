@@ -14,7 +14,7 @@ export const useCharacters = (query: string, page: number) => {
 
   return {
     results: isNotFound ? [] : (data?.results ?? []),
-    loading: isLoading,
+    loading: isLoading || isFetching,
     fetching: isFetching,
     error:
       error && !isNotFound

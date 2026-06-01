@@ -7,11 +7,14 @@ const DetailsPanel = () => {
 
   const {
     data: character,
-    isLoading: loading,
+    isLoading,
+    isFetching,
     error,
   } = useGetCharacterByIdQuery(id!, {
     skip: !id,
   });
+
+  const loading = isLoading || isFetching;
 
   const handleClose = () => {
     navigate(`/page/${page ?? 1}`);
