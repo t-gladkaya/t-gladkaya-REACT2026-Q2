@@ -1,5 +1,5 @@
 import Card from './Card';
-import type { Character } from './Card';
+import type { Character } from '../types/types';
 import PreLoader from './PreLoader';
 import ErrorFallback from './ErrorFallback';
 

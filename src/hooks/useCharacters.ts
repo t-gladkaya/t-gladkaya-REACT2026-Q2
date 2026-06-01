@@ -1,54 +1,25 @@
-import React from 'react';
-import type { Character } from '../components/Card';
-import { fetchCharacter } from '../api/api';
+import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { useGetCharactersQuery } from '../api/api';
+
+const isFetchBaseQueryError = (error: unknown): error is FetchBaseQueryError =>
+  typeof error === 'object' && error !== null && 'status' in error;
 
 export const useCharacters = (query: string, page: number) => {
-  const [results, setResults] = React.useState<Character[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<Error | null>(null);
-  const [totalPages, setTotalPages] = React.useState(1);
+  const { data, isLoading, isFetching, error } = useGetCharactersQuery({
+    query,
+    page,
+  });
 
-  React.useEffect(() => {
-    let isCancelled = false;
-
-    const loadPage = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const data = await fetchCharacter(query, page);
-
-        if (isCancelled) {
-          return;
-        }
-
-        setResults(data.results);
-        setTotalPages(data.info.pages);
-      } catch {
-        if (isCancelled) {
-          return;
-        }
-
-        setResults([]);
-        setError(new Error('Something went wrong while loading results.'));
-      } finally {
-        if (!isCancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    void loadPage();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [query, page]);
+  const isNotFound = isFetchBaseQueryError(error) && error.status === 404;
 
   return {
-    results,
-    loading,
-    error,
-    totalPages,
+    results: isNotFound ? [] : (data?.results ?? []),
+    loading: isLoading || isFetching,
+    fetching: isFetching,
+    error:
+      error && !isNotFound
+        ? new Error('Something went wrong while loading results.')
+        : null,
+    totalPages: isNotFound ? 0 : (data?.info.pages ?? 0),
   };
 };

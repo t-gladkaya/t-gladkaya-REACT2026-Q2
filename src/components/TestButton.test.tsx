@@ -4,6 +4,20 @@ import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import TestButton from './TestButton';
 import ErrorBoundary from './ErrorBoundary';
+import { Provider } from 'react-redux';
+import { createAppStore } from '../app/state';
+
+const renderTestButton = (withErrorBoundary = false) => {
+  const content = withErrorBoundary ? (
+    <ErrorBoundary>
+      <TestButton />
+    </ErrorBoundary>
+  ) : (
+    <TestButton />
+  );
+
+  return render(<Provider store={createAppStore()}>{content}</Provider>);
+};
 
 describe('TestButton', () => {
   afterEach(() => {
@@ -11,7 +25,7 @@ describe('TestButton', () => {
   });
 
   it('renders without crashing', () => {
-    render(<TestButton />);
+    renderTestButton();
 
     expect(
       screen.getByRole('button', { name: /test button/i })
@@ -26,17 +40,11 @@ describe('TestButton', () => {
 
     const user = userEvent.setup();
 
-    render(
-      <ErrorBoundary>
-        <TestButton />
-      </ErrorBoundary>
-    );
+    renderTestButton(true);
 
     await user.click(screen.getByRole('button', { name: /test button/i }));
 
-    expect(
-      await screen.findByText(/request failed with status 404/i)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/^request failed$/i)).toBeInTheDocument();
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
@@ -48,11 +56,7 @@ describe('TestButton', () => {
 
     const user = userEvent.setup();
 
-    render(
-      <ErrorBoundary>
-        <TestButton />
-      </ErrorBoundary>
-    );
+    renderTestButton(true);
 
     await user.click(screen.getByRole('button', { name: /test button/i }));
 

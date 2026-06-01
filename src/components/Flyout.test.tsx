@@ -46,6 +46,7 @@ describe('Flyout component', () => {
         gender: 'Male',
         origin: { name: 'Earth (C-137)' },
         location: { name: 'Citadel of Ricks' },
+        episode: ['episode-1'],
         detailsUrl: '/page/1/details/1',
         image: 'https://rickandmortyapi.com/api/character/avatar/1.jpeg',
       })

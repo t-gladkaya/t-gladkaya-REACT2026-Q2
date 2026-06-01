@@ -1,46 +1,42 @@
-import type { Character } from '../components/Card';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type {
+  Character,
+  CharacterResponse,
+  GetCharactersArgs,
+} from '../types/types';
 
-export const API_URLS = ['https://rickandmortyapi.com/api/character'];
+const cacheTime = Number(import.meta.env.VITE_CACHE_TIME ?? 300);
 
-interface CharacterResponse {
-  info: {
-    pages: number;
-  };
-  results: Character[];
-}
+export const mainApi = createApi({
+  reducerPath: 'mainApi',
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://rickandmortyapi.com/api' }),
+  keepUnusedDataFor: cacheTime,
+  tagTypes: ['Characters', 'Character'],
+  endpoints: (builder) => ({
+    getCharacters: builder.query<CharacterResponse, GetCharactersArgs>({
+      query: ({ query, page }) => ({
+        url: 'character',
+        params: {
+          page,
+          ...(query.trim() ? { name: query.trim() } : {}),
+        },
+      }),
+      providesTags: [{ type: 'Characters', id: 'LIST' }],
+    }),
 
-export const fetchCharacter = async (
-  query: string,
-  page: number
-): Promise<CharacterResponse> => {
-  let lastError: unknown;
+    getCharacterById: builder.query<Character, string>({
+      query: (id) => `character/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'Character', id }],
+    }),
 
-  for (const apiUrl of API_URLS) {
-    try {
-      const trimmedQuery = query.trim();
+    testInvalidEndpoint: builder.query<unknown, void>({
+      query: () => 'invalid-endpoint',
+    }),
+  }),
+});
 
-      const params = new URLSearchParams();
-
-      if (trimmedQuery) {
-        params.set('name', trimmedQuery);
-      }
-      params.set('page', page.toString());
-
-      const response = await fetch(`${apiUrl}?${params.toString()}`);
-
-      if (response.status === 404) {
-        return { results: [], info: { pages: 0 } };
-      }
-
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-
-      return (await response.json()) as CharacterResponse;
-    } catch (error) {
-      lastError = error;
-    }
-  }
-
-  throw lastError ?? new Error('Failed to fetch characters.');
-};
+export const {
+  useGetCharactersQuery,
+  useGetCharacterByIdQuery,
+  useLazyTestInvalidEndpointQuery,
+} = mainApi;

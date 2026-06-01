@@ -7,11 +7,42 @@ import '../test-utils/mainPageMocks';
 import { ThemeProvider } from '../context/ThemeProvider';
 import MainPage from './mainPage';
 import { Provider } from 'react-redux';
-import { store } from '../app/state';
+import { createAppStore } from '../app/state';
+
+const response = (body: unknown, init?: ResponseInit) =>
+  new Response(JSON.stringify(body), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    ...init,
+  });
+
+const expectFetchUrl = (
+  expectedUrl: string,
+  expectedParams: Record<string, string>
+) => {
+  const urls = vi.mocked(fetch).mock.calls.map(([request]) => {
+    const url = request instanceof Request ? request.url : String(request);
+    return new URL(url);
+  });
+
+  expect(
+    urls.some((url) => {
+      if (url.origin + url.pathname !== expectedUrl) {
+        return false;
+      }
+
+      return Object.entries(expectedParams).every(
+        ([key, value]) => url.searchParams.get(key) === value
+      );
+    })
+  ).toBe(true);
+};
 
 const renderMainPage = () =>
   render(
-    <Provider store={store}>
+    <Provider store={createAppStore()}>
       <ThemeProvider>
         <MemoryRouter initialEntries={['/page/1']}>
           <Routes>
@@ -27,33 +58,33 @@ describe('MainPage', () => {
     vi.clearAllMocks();
     localStorage.clear();
 
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: async () => ({
-        info: {
-          pages: 2,
-        },
-        results: [
-          {
-            id: '1',
-            name: 'Rick Sanchez',
-            status: 'Alive',
-            species: 'Human',
-            gender: 'Male',
-            image: 'image-url',
+    globalThis.fetch = vi.fn().mockImplementation(() =>
+      Promise.resolve(
+        response({
+          info: {
+            pages: 2,
           },
-        ],
-      }),
-    }) as unknown as typeof fetch;
+          results: [
+            {
+              id: '1',
+              name: 'Rick Sanchez',
+              status: 'Alive',
+              species: 'Human',
+              gender: 'Male',
+              image: 'image-url',
+            },
+          ],
+        })
+      )
+    ) as unknown as typeof fetch;
   });
 
-  it('renders child components', () => {
+  it('renders child components', async () => {
     renderMainPage();
 
     expect(screen.getByTestId('search-line')).toBeInTheDocument();
     expect(screen.getByTestId('results-section')).toBeInTheDocument();
-    expect(screen.getByTestId('pagination')).toBeInTheDocument();
+    expect(await screen.findByTestId('pagination')).toBeInTheDocument();
     expect(screen.getByTestId('test-button')).toBeInTheDocument();
   });
 
@@ -90,25 +121,30 @@ describe('MainPage', () => {
     expect(localStorage.getItem('lastInput')).toBe('rick');
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(
-        'https://rickandmortyapi.com/api/character?name=rick&page=1'
-      );
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        name: 'rick',
+        page: '1',
+      });
     });
 
     expect(await screen.findByText('Rick Sanchez')).toBeInTheDocument();
   });
 
   it('passes empty results when API returns 404', async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: false,
-      status: 404,
-    }) as unknown as typeof fetch;
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(
+        response({}, { status: 404 })
+      ) as unknown as typeof fetch;
 
     renderMainPage();
 
     await waitFor(() => {
       expect(screen.getByTestId('results-count')).toHaveTextContent('0');
     });
+
+    expect(screen.getByTestId('error')).toHaveTextContent('');
+    expect(screen.queryByTestId('pagination')).not.toBeInTheDocument();
   });
 
   it('passes error to ResultsSection when request fails', async () => {
@@ -150,9 +186,10 @@ describe('MainPage', () => {
     await user.click(screen.getByRole('button', { name: /search/i }));
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(
-        'https://rickandmortyapi.com/api/character?name=rick&page=1'
-      );
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        name: 'rick',
+        page: '1',
+      });
     });
 
     vi.mocked(fetch).mockClear();
@@ -168,9 +205,9 @@ describe('MainPage', () => {
     renderMainPage();
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(
-        'https://rickandmortyapi.com/api/character?page=1'
-      );
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        page: '1',
+      });
     });
 
     vi.mocked(fetch).mockClear();
@@ -178,9 +215,63 @@ describe('MainPage', () => {
     await user.click(screen.getByRole('button', { name: '2' }));
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(
-        'https://rickandmortyapi.com/api/character?page=2'
-      );
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        page: '2',
+      });
+    });
+  });
+
+  it('reuses cached page data when returning to a previously loaded page', async () => {
+    const user = userEvent.setup();
+
+    renderMainPage();
+
+    await waitFor(() => {
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        page: '1',
+      });
+    });
+
+    vi.mocked(fetch).mockClear();
+
+    await user.click(screen.getByRole('button', { name: '2' }));
+
+    await waitFor(() => {
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        page: '2',
+      });
+    });
+
+    vi.mocked(fetch).mockClear();
+
+    await user.click(screen.getByRole('button', { name: '1' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('pagination-value')).toHaveTextContent('1 / 2');
+    });
+
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('refetches current page when refresh button is clicked', async () => {
+    const user = userEvent.setup();
+
+    renderMainPage();
+
+    await waitFor(() => {
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        page: '1',
+      });
+    });
+
+    vi.mocked(fetch).mockClear();
+
+    await user.click(screen.getByRole('button', { name: /refresh data/i }));
+
+    await waitFor(() => {
+      expectFetchUrl('https://rickandmortyapi.com/api/character', {
+        page: '1',
+      });
     });
   });
 });

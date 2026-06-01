@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLazyTestInvalidEndpointQuery } from '../api/api';
 
 interface TestButtonState {
   error: Error | null;
@@ -9,23 +10,13 @@ const TestButton = () => {
     error: null,
   });
 
+  const [triggerTestRequest] = useLazyTestInvalidEndpointQuery();
+
   const triggerNetworkError = async () => {
     try {
-      const response = await fetch(
-        'https://rickandmortyapi.com/api/invalid-endpoint'
-      );
-
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-
-      await response.json();
-    } catch (error) {
-      if (error instanceof Error) {
-        setState({ error });
-      } else {
-        setState({ error: new Error('Request failed') });
-      }
+      await triggerTestRequest().unwrap();
+    } catch {
+      setState({ error: new Error('Request failed') });
     }
   };
 

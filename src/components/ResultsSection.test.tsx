@@ -4,18 +4,42 @@ import { MemoryRouter } from 'react-router';
 import { Provider } from 'react-redux';
 import { store } from '../app/state';
 import ResultsSection from './ResultsSection';
-import type { Character } from './Card';
+import type { Character } from '../types/types';
 
 const mockResults: Character[] = [
   {
     id: '1',
     name: 'Rick Sanchez',
     image: 'https://rickandmortyapi.com/api/character/avatar/1.jpeg',
+    status: 'Alive',
+    species: 'Human',
+    type: '',
+    gender: 'Male',
+    origin: {
+      name: 'Earth (C-137)',
+    },
+    location: {
+      name: 'Earth (C-137)',
+    },
+    episode: [],
+    detailsUrl: '/page/1/details/1',
   },
   {
     id: '2',
     name: 'Morty Smith',
     image: 'https://rickandmortyapi.com/api/character/avatar/2.jpeg',
+    status: 'Alive',
+    species: 'Human',
+    type: '',
+    gender: 'Male',
+    origin: {
+      name: 'Earth (C-137)',
+    },
+    location: {
+      name: 'Earth (C-137)',
+    },
+    episode: [],
+    detailsUrl: '/page/1/details/2',
   },
 ];
 

@@ -6,23 +6,7 @@ import {
   useAppSelector,
 } from '../app/state';
 import type React from 'react';
-
-export interface Character {
-  id: string;
-  name: string;
-  image: string;
-  status?: string;
-  species?: string;
-  type?: string;
-  gender?: string;
-  origin?: {
-    name: string;
-  };
-  location?: {
-    name: string;
-  };
-  detailsUrl?: string;
-}
+import type { Character } from '../types/types';
 
 interface CardProps {
   data: Character;
