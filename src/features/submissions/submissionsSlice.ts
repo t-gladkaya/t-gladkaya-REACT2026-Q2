@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Submission } from "../../types/types";
+import { countries } from "../forms/formSchema"
 
 type SubmissionsState = {
   items: Submission[];
@@ -8,7 +9,7 @@ type SubmissionsState = {
 
 const initialState: SubmissionsState = {
   items: [],
-  countries: [],
+  countries: countries,
 }
 
 const submissionsSlice = createSlice ({
