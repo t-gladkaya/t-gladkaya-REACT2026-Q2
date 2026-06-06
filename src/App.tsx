@@ -20,7 +20,7 @@ function App() {
           <div className="flex flex-wrap gap-3">
             <button
               type="button"
-              className="rounded bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 hover:cursor-pointer"
+              className="rounded bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 hover:cursor-pointer focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.7)]"
               onClick={() => setActiveForm('uncontrolled')}
             >
               Open Uncontrolled Form
@@ -28,7 +28,7 @@ function App() {
 
             <button
               type="button"
-              className="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-slate-100 hover:cursor-pointer"
+              className="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-slate-100 hover:cursor-pointer focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.7)]"
               onClick={() => setActiveForm('react-hook-form')}
             >
               Open React Hook Form
