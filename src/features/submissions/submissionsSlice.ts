@@ -3,10 +3,12 @@ import type { Submission } from "../../types/types";
 
 type SubmissionsState = {
   items: Submission[];
+  countries: string[];
 };
 
 const initialState: SubmissionsState = {
   items: [],
+  countries: [],
 }
 
 const submissionsSlice = createSlice ({
