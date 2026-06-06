@@ -9,7 +9,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
       }}   
     >
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-slate-700">Name</label>
+        <label htmlFor="uncontrolled-name" className="text-sm font-medium text-slate-700">Name</label>
         <input 
           id="uncontrolled-name"
           name="name"
@@ -19,7 +19,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="rhf-age" className="text-sm font-medium text-slate-700">Age</label>
+        <label htmlFor="uncontrolled-age" className="text-sm font-medium text-slate-700">Age</label>
         <input 
           id="uncontrolled-age"
           name="age"
@@ -31,7 +31,8 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
       <div className="flex flex-col gap-1">
         <label htmlFor="uncontrolled-email" className="text-sm font-medium text-slate-700">Email</label>
         <input 
-          id="rhf-email" 
+          id="uncontrolled-email"
+          name="email"
           type="email" 
           className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.7)]"
         />
@@ -43,25 +44,27 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
         <label className="flex items-center gap-2 text-sm text-slate-700">
           <input 
             type="radio"
+            name="gender"
+            value="male"
             className="focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.7)]" 
           />
           Male
         </label>
 
         <label className="flex items-center gap-2 text-sm text-slate-700">
-          <input type="radio" value="female" />
+          <input type="radio" name="gender" value="female" />
           Female
         </label>
 
         <label className="flex items-center gap-2 text-sm text-slate-700">
-          <input type="radio" value="other" />
+          <input type="radio" name="gender" value="other" />
           Other
         </label>
 
       </fieldset>
 
       <label className="flex items-start gap-2 text-sm text-slate-700">
-        <input type="checkbox" className="mt-1" />
+        <input type="checkbox" name="terms" className="mt-1" />
         I accept Terms and Conditions
       </label>
 
