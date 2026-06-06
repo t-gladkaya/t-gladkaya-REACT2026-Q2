@@ -70,7 +70,7 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
       >
       <div 
         ref={modalRef}
-        className="relative bg-white p-40 rounded-lg shadow-lg"
+        className="relative max-h-[90vh] max-w-[calc(100vw-2rem)] overflow-y-auto rounded-lg bg-white p-6 shadow-lg"
         role="dialog"
         aria-modal="true"
         aria-label="Form modal"
