@@ -110,8 +110,9 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
           <legend className="text-sm font-medium text-slate-700">Gender</legend>
 
           <div className="flex flex-wrap gap-3">
-            <label className="flex items-center gap-2 text-sm text-slate-700">
+            <label htmlFor="rhf-gender-male" className="flex items-center gap-2 text-sm text-slate-700">
               <input 
+                id="rhf-gender-male"
                 type="radio"
                 value="male" {...register("gender")}
                 className="focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.7)]" 
@@ -119,13 +120,13 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
               Male
             </label>
 
-            <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input type="radio" value="female" {...register("gender")} />
+            <label htmlFor="rhf-gender-female" className="flex items-center gap-2 text-sm text-slate-700">
+              <input id="rhf-gender-female" type="radio" value="female" {...register("gender")} />
               Female
             </label>
 
-            <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input type="radio" value="other" {...register("gender")} />
+            <label htmlFor="rhf-gender-other" className="flex items-center gap-2 text-sm text-slate-700">
+              <input id="rhf-gender-other" type="radio" value="other" {...register("gender")} />
               Other
             </label>
           </div>
@@ -233,8 +234,8 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="flex items-start gap-2 text-sm text-slate-700">
-            <input type="checkbox" className="mt-1" {...register("terms")} />
+          <label htmlFor="rhf-terms" className="flex items-start gap-2 text-sm text-slate-700">
+            <input id="rhf-terms" type="checkbox" className="mt-1" {...register("terms")} />
             I accept Terms and Conditions
           </label>
 

@@ -135,8 +135,9 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
           <legend className="text-sm font-medium text-slate-700">Gender</legend>
 
           <div className="flex flex-wrap gap-3">
-            <label className="flex items-center gap-2 text-sm text-slate-700">
+            <label htmlFor="uncontrolled-gender-male" className="flex items-center gap-2 text-sm text-slate-700">
               <input 
+                id="uncontrolled-gender-male"
                 type="radio"
                 name="gender"
                 value="male"
@@ -145,13 +146,13 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
               Male
             </label>
 
-            <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input type="radio" name="gender" value="female" />
+            <label htmlFor="uncontrolled-gender-female" className="flex items-center gap-2 text-sm text-slate-700">
+              <input id="uncontrolled-gender-female" type="radio" name="gender" value="female" />
               Female
             </label>
 
-            <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input type="radio" name="gender" value="other" />
+            <label htmlFor="uncontrolled-gender-other" className="flex items-center gap-2 text-sm text-slate-700">
+              <input id="uncontrolled-gender-other" type="radio" name="gender" value="other" />
               Other
             </label>
           </div>
@@ -248,8 +249,8 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="flex items-start gap-2 text-sm text-slate-700">
-            <input type="checkbox" name="terms" className="mt-1" />
+          <label htmlFor="uncontrolled-terms" className="flex items-start gap-2 text-sm text-slate-700">
+            <input id="uncontrolled-terms" type="checkbox" name="terms" className="mt-1" />
             I accept Terms and Conditions
           </label>
 
