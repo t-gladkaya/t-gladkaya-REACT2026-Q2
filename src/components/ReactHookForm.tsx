@@ -3,11 +3,16 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import type { FormProps } from "../types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema, countries } from "../features/forms/formSchema";
+import { fileToBase64 } from "../features/forms/fileToBase64";
+import { useDispatch } from "react-redux";
+import { addSubmission } from "../features/submissions/submissionsSlice";
 
 type FormInputValues = z.input<typeof formSchema>;
 type FormOutputValues = z.output<typeof formSchema>;
 
 const ReactHookForm = ({ onSuccess }: FormProps) => {
+  const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
@@ -18,8 +23,23 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
     mode: "onChange",
   });
 
-  const onSubmit: SubmitHandler<FormOutputValues> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<FormOutputValues> = async(data) => {
+    const imageBase64 = await fileToBase64(data.image);
+
+    dispatch(addSubmission({
+      id: crypto.randomUUID(),
+      source: "react-hook-form",
+      name: data.name,
+      age: data.age,
+      email: data.email,
+      gender: data.gender,
+      terms: data.terms,
+      image: imageBase64,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+      country: data.country,
+      createdAt: new Date().toISOString(),
+    }))
     onSuccess();
   }
 
