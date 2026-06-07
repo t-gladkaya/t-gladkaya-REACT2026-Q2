@@ -4,7 +4,7 @@ import type { FormProps } from "../types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema, countries } from "../features/forms/formSchema";
 import { fileToBase64 } from "../features/forms/fileToBase64";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../app/hooks";
 import { addSubmission } from "../features/submissions/submissionsSlice";
 import { getPasswordStrength } from "../features/forms/passwordStrength";
 
@@ -12,7 +12,7 @@ type FormInputValues = z.input<typeof formSchema>;
 type FormOutputValues = z.output<typeof formSchema>;
 
 const ReactHookForm = ({ onSuccess }: FormProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const {
     register,
@@ -35,9 +35,10 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
 
   const onSubmit: SubmitHandler<FormOutputValues> = async(data) => {
     const imageBase64 = await fileToBase64(data.image);
+    const submissionId = crypto.randomUUID();
 
     dispatch(addSubmission({
-      id: crypto.randomUUID(),
+      id: submissionId,
       source: "react-hook-form",
       name: data.name,
       age: data.age,
@@ -50,7 +51,7 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
       country: data.country,
       createdAt: new Date().toISOString(),
     }))
-    onSuccess();
+    onSuccess(submissionId);
   }
 
   return (

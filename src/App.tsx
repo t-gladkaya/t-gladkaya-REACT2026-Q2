@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormType } from "./types/types";
 import Modal from "./components/Modal";
 import UncontrolledForm from "./components/UncontrolledForm";
@@ -7,12 +7,34 @@ import { useAppSelector } from "./app/hooks";
 
 function App() {
   const [ activeForm, setActiveForm ] = useState<FormType>(null);
-
-  const closeModal = () => {
-    setActiveForm(null);
-  }
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
+  const highlightTimeoutRef = useRef<number | null>(null);
 
   const submissions = useAppSelector((state) => state.submissions.items);
+
+  const closeModal = (submittedId?: string) => {
+    setActiveForm(null);
+
+    if (!submittedId) return;
+
+    setHighlightedId(submittedId);
+
+    if (highlightTimeoutRef.current) {
+      window.clearTimeout(highlightTimeoutRef.current);
+    }
+
+    highlightTimeoutRef.current = window.setTimeout(() => {
+      setHighlightedId(null);
+    }, 3000);
+  }
+
+  useEffect(() => {
+    return () => {
+      if (highlightTimeoutRef.current) {
+        window.clearTimeout(highlightTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <main className="min-h-screen bg-slate-50 px-6 py-10 text-slate-950">
@@ -49,7 +71,11 @@ function App() {
               {submissions.map((submission) => (
                 <article
                   key={submission.id}
-                  className="overflow-hidden rounded border border-slate-200 bg-white shadow-sm"
+                  className={`overflow-hidden rounded border bg-white shadow-sm transition ${
+                    highlightedId === submission.id
+                      ? "border-cyan-400 border-2 shadow-[0_0_20px_rgba(34,211,238,0.45)]"
+                      : "border-slate-200"
+                  }`}
                 >
                   <img
                     src={submission.image}

@@ -19,5 +19,5 @@ export type FormType = 'uncontrolled' | 'react-hook-form' | null;
 export type FormSource = Exclude<FormType, null>;
 
 export type FormProps = {
-  onSuccess: () => void;
+  onSuccess: (submittedId?: string) => void;
 }

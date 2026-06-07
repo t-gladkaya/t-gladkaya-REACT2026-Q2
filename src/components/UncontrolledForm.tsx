@@ -54,9 +54,10 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
     }
 
     const imageBase64 = await fileToBase64(result.data.image);
+    const submissionId = crypto.randomUUID();
 
     dispatch(addSubmission({
-      id: crypto.randomUUID(),
+      id: submissionId,
       source: "uncontrolled",
       name: result.data.name,
       age: result.data.age,
@@ -73,7 +74,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
     setErrors({});
     form.reset();
     setPassword("");
-    onSuccess();
+    onSuccess(submissionId);
   }
 
   return (
