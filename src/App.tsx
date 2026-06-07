@@ -73,7 +73,7 @@ function App() {
                   key={submission.id}
                   className={`overflow-hidden rounded border bg-white shadow-sm transition ${
                     highlightedId === submission.id
-                      ? "border-cyan-400 border-2 shadow-[0_0_20px_rgba(34,211,238,0.45)]"
+                      ? "border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.45)]"
                       : "border-slate-200"
                   }`}
                 >

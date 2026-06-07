@@ -2,9 +2,9 @@ import { z } from "zod";
 import { useForm, useWatch, type SubmitHandler } from "react-hook-form";
 import type { FormProps } from "../types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { formSchema, countries } from "../features/forms/formSchema";
+import { formSchema } from "../features/forms/formSchema";
 import { fileToBase64 } from "../features/forms/fileToBase64";
-import { useAppDispatch } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { addSubmission } from "../features/submissions/submissionsSlice";
 import { getPasswordStrength } from "../features/forms/passwordStrength";
 
@@ -13,6 +13,7 @@ type FormOutputValues = z.output<typeof formSchema>;
 
 const ReactHookForm = ({ onSuccess }: FormProps) => {
   const dispatch = useAppDispatch();
+  const countries = useAppSelector((state) => state.submissions.countries);
 
   const {
     register,
