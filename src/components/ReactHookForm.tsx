@@ -1,11 +1,12 @@
 import { z } from "zod";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm, useWatch, type SubmitHandler } from "react-hook-form";
 import type { FormProps } from "../types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema, countries } from "../features/forms/formSchema";
 import { fileToBase64 } from "../features/forms/fileToBase64";
 import { useDispatch } from "react-redux";
 import { addSubmission } from "../features/submissions/submissionsSlice";
+import { getPasswordStrength } from "../features/forms/passwordStrength";
 
 type FormInputValues = z.input<typeof formSchema>;
 type FormOutputValues = z.output<typeof formSchema>;
@@ -17,11 +18,20 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors, isValid },
   } = useForm<FormInputValues, unknown, FormOutputValues>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
   });
+
+  const password = String(
+    useWatch({
+      control,
+      name: "password",
+    }) ?? ""
+  );
+  const passwordStrength = getPasswordStrength(password);
 
   const onSubmit: SubmitHandler<FormOutputValues> = async(data) => {
     const imageBase64 = await fileToBase64(data.image);
@@ -183,6 +193,23 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
             {...register("password")}
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-400"
           />
+          {password.length > 0 && (
+            <ul className="grid gap-1 text-xs text-slate-500">
+              <li className={passwordStrength.hasNumber ? "text-green-600" : ""}>
+                1 number
+              </li>
+              <li className={passwordStrength.hasUppercase ? "text-green-600" : ""}>
+                1 uppercase letter
+              </li>
+              <li className={passwordStrength.hasLowercase ? "text-green-600" : ""}>
+                1 lowercase letter
+              </li>
+              <li className={passwordStrength.hasSpecial ? "text-green-600" : ""}>
+                1 special character
+              </li>
+            </ul>
+          )}
+
           {errors.password && (
             <p className="text-xs text-red-600">{errors.password.message}</p>
           )}
