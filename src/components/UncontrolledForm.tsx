@@ -19,6 +19,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
   const [errors, setErrors] = useState<FormErrors>({});
 
   const [password, setPassword] = useState("");
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const passwordStrength = getPasswordStrength(password);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -37,7 +38,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
       password: formData.get("password"),
       confirmPassword: formData.get("confirmPassword"),
       country: formData.get("country"),
-      image: image instanceof File && image.size > 0 ? image : undefined,
+      image: selectedImage ?? (image instanceof File && image.size > 0 ? image : undefined),
     }
 
     const result = schema.safeParse(values);
@@ -77,6 +78,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
     setErrors({});
     form.reset();
     setPassword("");
+    setSelectedImage(null);
     onSuccess(submissionId);
   }
 
@@ -185,6 +187,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
             name="image"
             type="file"
             accept="image/png,image/jpeg"
+            onChange={(event) => setSelectedImage(event.currentTarget.files?.[0] ?? null)}
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm file:mr-3 file:rounded file:border-0 file:bg-slate-950 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white"
           />
           <p className="min-h-4 text-xs text-red-600">{errors.image}</p>
