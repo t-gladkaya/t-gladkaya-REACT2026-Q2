@@ -29,11 +29,14 @@ export const createFormSchema = (storedCountries: readonly string[] = countries)
         message: "Name must start with a capital letter",
       }),
     
-    age: z.coerce
-      .number({
-        message: "Age is required and must be a number",
-      })
-      .min(0, "Age cannot be negative"),
+    age: z.preprocess(
+      (value) => (value === "" ? undefined : value),
+      z.coerce
+        .number({
+          message: "Age is required and must be a number",
+        })
+        .min(0, "Age cannot be negative")
+    ),
 
     email: z
       .string()

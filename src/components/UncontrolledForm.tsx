@@ -3,7 +3,7 @@ import { createFormSchema, formSchema } from "../features/forms/formSchema";
 import { useState } from "react";
 import { z } from "zod";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { addSubmission } from "../features/submissions/submissionsSlice";
+import { addSubmission, selectCountries } from "../features/submissions/submissionsSlice";
 import { fileToBase64 } from "../features/forms/fileToBase64";
 import { getPasswordStrength } from "../features/forms/passwordStrength";
 
@@ -13,7 +13,7 @@ type FormErrors = Partial<Record<keyof FormInputValues, string>>;
 
 const UncontrolledForm = ({ onSuccess }: FormProps) => {
   const dispatch = useAppDispatch();
-  const countries = useAppSelector((state) => state.submissions.countries);
+  const countries = useAppSelector(selectCountries);
   const schema = createFormSchema(countries);
 
   const [errors, setErrors] = useState<FormErrors>({});

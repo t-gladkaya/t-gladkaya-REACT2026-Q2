@@ -40,6 +40,13 @@ describe("formSchema", () => {
     }
   });
 
+  it("rejects empty or negative age values", () => {
+    const schema = createFormSchema(["France"]);
+
+    expect(schema.safeParse({ ...validValues, age: "" }).success).toBe(false);
+    expect(schema.safeParse({ ...validValues, age: "-1" }).success).toBe(false);
+  });
+
   it("rejects images with unsupported type or excessive size", () => {
     const schema = createFormSchema(["France"]);
     const textFile = new File(["text"], "avatar.txt", { type: "text/plain" });

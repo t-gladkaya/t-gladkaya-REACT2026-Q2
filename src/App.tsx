@@ -4,13 +4,14 @@ import Modal from "./components/Modal";
 import UncontrolledForm from "./components/UncontrolledForm";
 import ReactHookForm from "./components/ReactHookForm";
 import { useAppSelector } from "./app/hooks";
+import { selectSubmissions } from "./features/submissions/submissionsSlice";
 
 function App() {
   const [ activeForm, setActiveForm ] = useState<FormType>(null);
   const [highlightedId, setHighlightedId] = useState<string | null>(null);
   const highlightTimeoutRef = useRef<number | null>(null);
 
-  const submissions = useAppSelector((state) => state.submissions.items);
+  const submissions = useAppSelector(selectSubmissions);
 
   const closeModal = (submittedId?: string) => {
     setActiveForm(null);

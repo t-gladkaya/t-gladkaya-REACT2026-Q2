@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { addSubmission, clearSubmissions, submissionsReducer } from "./submissionsSlice";
+import {
+  addSubmission,
+  clearSubmissions,
+  selectCountries,
+  selectSubmissions,
+  submissionsReducer,
+} from "./submissionsSlice";
 import type { Submission } from "../../types/types";
 
 const submission: Submission = {
@@ -24,5 +30,15 @@ describe("submissionsSlice", () => {
     expect(stateWithSubmission.items).toEqual([submission]);
     expect(stateWithSubmission.countries).toContain("Belarus");
     expect(submissionsReducer(stateWithSubmission, clearSubmissions()).items).toEqual([]);
+  });
+
+  it("selects submissions and countries from root state", () => {
+    const submissionsState = submissionsReducer(undefined, addSubmission(submission));
+    const rootState = {
+      submissions: submissionsState,
+    };
+
+    expect(selectSubmissions(rootState)).toEqual([submission]);
+    expect(selectCountries(rootState)).toContain("Belarus");
   });
 });

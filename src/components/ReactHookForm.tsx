@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createFormSchema, formSchema } from "../features/forms/formSchema";
 import { fileToBase64 } from "../features/forms/fileToBase64";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { addSubmission } from "../features/submissions/submissionsSlice";
+import { addSubmission, selectCountries } from "../features/submissions/submissionsSlice";
 import { getPasswordStrength } from "../features/forms/passwordStrength";
 
 type FormInputValues = z.input<typeof formSchema>;
@@ -13,7 +13,7 @@ type FormOutputValues = z.output<typeof formSchema>;
 
 const ReactHookForm = ({ onSuccess }: FormProps) => {
   const dispatch = useAppDispatch();
-  const countries = useAppSelector((state) => state.submissions.countries);
+  const countries = useAppSelector(selectCountries);
   const schema = createFormSchema(countries);
 
   const {
