@@ -1,5 +1,5 @@
 import type { FormProps } from "../types/types";
-import { formSchema } from "../features/forms/formSchema";
+import { createFormSchema, formSchema } from "../features/forms/formSchema";
 import { useState } from "react";
 import { z } from "zod";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
@@ -14,6 +14,7 @@ type FormErrors = Partial<Record<keyof FormInputValues, string>>;
 const UncontrolledForm = ({ onSuccess }: FormProps) => {
   const dispatch = useAppDispatch();
   const countries = useAppSelector((state) => state.submissions.countries);
+  const schema = createFormSchema(countries);
 
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -39,7 +40,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
       image: image instanceof File && image.size > 0 ? image : undefined,
     }
 
-    const result = formSchema.safeParse(values);
+    const result = schema.safeParse(values);
 
     if (!result.success) {
       const nextErrors: FormErrors = {};
@@ -93,9 +94,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
             type="text"
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.7)]"
           />
-          {errors.name && (
-            <p className="text-xs text-red-600">{errors.name}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.name}</p>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -113,9 +112,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
             }}
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.7)]"
           />
-          {errors.age && (
-            <p className="text-xs text-red-600">{errors.age}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.age}</p>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -126,9 +123,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
             type="email" 
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.7)]"
           />
-          {errors.email && (
-            <p className="text-xs text-red-600">{errors.email}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.email}</p>
         </div>
 
         <fieldset className="grid gap-1.5 sm:col-span-2">
@@ -156,9 +151,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
               Other
             </label>
           </div>
-          {errors.gender && (
-            <p className="text-xs text-red-600">{errors.gender}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.gender}</p>
         </fieldset>
       </section>
 
@@ -180,9 +173,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
               <option key={country} value={country} />
             ))}
           </datalist>
-          {errors.country && (
-            <p className="text-xs text-red-600">{errors.country}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.country}</p>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -196,9 +187,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
             accept="image/png,image/jpeg"
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm file:mr-3 file:rounded file:border-0 file:bg-slate-950 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white"
           />
-          {errors.image && (
-            <p className="text-xs text-red-600">{errors.image}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.image}</p>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -228,9 +217,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
               </li>
             </ul>
           )}
-          {errors.password && (
-            <p className="text-xs text-red-600">{errors.password}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.password}</p>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -243,9 +230,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
             type="password"
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-400"
           />
-          {errors.confirmPassword && (
-            <p className="text-xs text-red-600">{errors.confirmPassword}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.confirmPassword}</p>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -254,9 +239,7 @@ const UncontrolledForm = ({ onSuccess }: FormProps) => {
             I accept Terms and Conditions
           </label>
 
-          {errors.terms && (
-            <p className="text-xs text-red-600">{errors.terms}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.terms}</p>
         </div>
       </section>
 

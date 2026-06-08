@@ -2,7 +2,7 @@ import { z } from "zod";
 import { useForm, useWatch, type SubmitHandler } from "react-hook-form";
 import type { FormProps } from "../types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { formSchema } from "../features/forms/formSchema";
+import { createFormSchema, formSchema } from "../features/forms/formSchema";
 import { fileToBase64 } from "../features/forms/fileToBase64";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { addSubmission } from "../features/submissions/submissionsSlice";
@@ -14,6 +14,7 @@ type FormOutputValues = z.output<typeof formSchema>;
 const ReactHookForm = ({ onSuccess }: FormProps) => {
   const dispatch = useAppDispatch();
   const countries = useAppSelector((state) => state.submissions.countries);
+  const schema = createFormSchema(countries);
 
   const {
     register,
@@ -22,7 +23,7 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
     control,
     formState: { errors, isValid },
   } = useForm<FormInputValues, unknown, FormOutputValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(schema),
     mode: "onChange",
   });
 
@@ -68,9 +69,7 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
             type="text" {...register("name")}
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.7)]"
           />
-          {errors.name && (
-            <p className="text-xs text-red-600">{errors.name.message}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.name?.message}</p>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -88,9 +87,7 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
             }}
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.7)]"
           />
-          {errors.age && (
-            <p className="text-xs text-red-600">{errors.age.message}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.age?.message}</p>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -101,9 +98,7 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
             {...register("email")} 
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.7)]"
           />
-          {errors.email && (
-            <p className="text-xs text-red-600">{errors.email.message}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.email?.message}</p>
         </div>
 
         <fieldset className="grid gap-1.5 sm:col-span-2">
@@ -131,9 +126,7 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
             </label>
           </div>
 
-          {errors.gender && (
-            <p className="text-xs text-red-600">{errors.gender.message}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.gender?.message}</p>
 
         </fieldset>
       </section>
@@ -157,9 +150,7 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
             ))}
           </datalist>
 
-          {errors.country && (
-            <p className="text-xs text-red-600">{errors.country.message}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.country?.message}</p>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -181,9 +172,7 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
             }}
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm file:mr-3 file:rounded file:border-0 file:bg-slate-950 file:px-3 file:py-1 file:text-sm file:font-medium file:text-white"
           />
-          {errors.image && (
-            <p className="text-xs text-red-600">{errors.image.message}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.image?.message}</p>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -213,9 +202,7 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
             </ul>
           )}
 
-          {errors.password && (
-            <p className="text-xs text-red-600">{errors.password.message}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.password?.message}</p>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -228,9 +215,7 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
             {...register("confirmPassword")}
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-400"
           />
-          {errors.confirmPassword && (
-            <p className="text-xs text-red-600">{errors.confirmPassword.message}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.confirmPassword?.message}</p>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -239,9 +224,7 @@ const ReactHookForm = ({ onSuccess }: FormProps) => {
             I accept Terms and Conditions
           </label>
 
-          {errors.terms && (
-            <p className="text-xs text-red-600">{errors.terms.message}</p>
-          )}
+          <p className="min-h-4 text-xs text-red-600">{errors.terms?.message}</p>
         </div>
       </section>
 

@@ -19,7 +19,7 @@ const isValidEmail = (email: string) => {
   return true;
 };
 
-export const formSchema = z
+export const createFormSchema = (storedCountries: readonly string[] = countries) => z
   .object({
     name: z
       .string()
@@ -61,7 +61,7 @@ export const formSchema = z
 
     country: z
       .string()
-      .refine((value) => countries.includes(value), {
+      .refine((value) => storedCountries.includes(value), {
         message: "Please select a country from the list",
       }),
 
@@ -79,4 +79,5 @@ export const formSchema = z
     path: ["confirmPassword"],
   });
 
+export const formSchema = createFormSchema();
 export type FormValues = z.infer<typeof formSchema>;
