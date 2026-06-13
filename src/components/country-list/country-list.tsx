@@ -25,6 +25,18 @@ export const CountryList = ({
   sortField,
   sortOrder,
 }: CountryListProps) => {
+  const countryPopulationById = useMemo(() => {
+    return new Map(
+      countries.map((country) => {
+        const yearDataMap = createYearDataMap(country.data);
+        const population = getPopulationForYear(yearDataMap, selectedYear) || 0;
+
+        return [country.id, population];
+      })
+    );
+  }, [countries, selectedYear]);
+
+
   const filteredCountries = useMemo(() => {
     return countries
       .filter((c) => {
@@ -36,12 +48,12 @@ export const CountryList = ({
         if (sortField === 'name') {
           return sortOrder === 'asc' ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id);
         } else {
-          const popA = getPopulationForYear(createYearDataMap(a.data), selectedYear) || 0;
-          const popB = getPopulationForYear(createYearDataMap(b.data), selectedYear) || 0;
+          const popA = countryPopulationById.get(a.id) || 0;
+          const popB = countryPopulationById.get(b.id) || 0;
           return sortOrder === 'asc' ? popA - popB : popB - popA;
         }
       });
-  }, [countries, searchQuery, selectedRegion, selectedYear, sortField, sortOrder]);
+  }, [countries, searchQuery, selectedRegion, sortField, sortOrder, countryPopulationById]);
 
   return (
     <div className={styles.countryList}>
