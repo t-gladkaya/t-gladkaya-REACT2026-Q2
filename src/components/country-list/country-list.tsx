@@ -36,11 +36,12 @@ export const CountryList = ({
     );
   }, [countries, selectedYear]);
 
-
   const filteredCountries = useMemo(() => {
+    const normalizedSearchQuery = searchQuery.toLowerCase();
+
     return countries
       .filter((c) => {
-        const matchesSearch = c.id.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesSearch = c.id.toLowerCase().includes(normalizedSearchQuery);
         const matchesRegion = !selectedRegion || c.data.some((d) => d.region === selectedRegion);
         return matchesSearch && matchesRegion;
       })
