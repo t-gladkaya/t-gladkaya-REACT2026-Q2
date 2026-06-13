@@ -1,3 +1,18 @@
 .countryList {
-  padding: 16px;
+  height: calc(100vh - 260px);
+  min-height: 520px;
+  overflow-y: auto;
+  padding: 0 16px 16px;
+}
+
+.virtualContent {
+  position: relative;
+  width: 100%;
+}
+
+.virtualItem {
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
 }

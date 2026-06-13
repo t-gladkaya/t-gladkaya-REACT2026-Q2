@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import type { Country } from '../../types';
 import { CountryCard } from '../country-card/country-card';
 import { getPopulationForYear, createYearDataMap } from '../../utils/data-transformers';
@@ -56,16 +57,45 @@ export const CountryList = ({
       });
   }, [countries, searchQuery, selectedRegion, sortField, sortOrder, countryPopulationById]);
 
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const rowVirtualizer = useVirtualizer({
+    count: filteredCountries.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 240,
+    overscan: 5,
+  });
+
   return (
-    <div className={styles.countryList}>
-      {filteredCountries.map((country) => (
-        <CountryCard
-          key={country.id}
-          country={country}
-          selectedYear={selectedYear}
-          selectedColumns={selectedColumns}
-        />
-      ))}
+    <div ref={parentRef} className={styles.countryList}>
+      <div
+        className={styles.virtualContent}
+        style={{
+          height: `${rowVirtualizer.getTotalSize()}px`,
+        }}
+      >
+        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+          const country = filteredCountries[virtualRow.index];
+
+          return (
+            <div
+              key={country.id}
+              ref={rowVirtualizer.measureElement}
+              data-index={virtualRow.index}
+              className={styles.virtualItem}
+              style={{
+                transform: `translateY(${virtualRow.start}px)`,
+              }}
+            >
+              <CountryCard
+                country={country}
+                selectedYear={selectedYear}
+                selectedColumns={selectedColumns}
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
