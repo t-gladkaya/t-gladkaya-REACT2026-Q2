@@ -4,24 +4,20 @@
 
 ### Interaction A: Sort countries
 
-- **Commit duration**: \_\_\_ s
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![screenshot](image.png)
+- **Render duration**: 578.6 ms
+- **Screenshot**: ![screenshot](screenshots/baseline/Screenshot%202026-06-13%20112528.png)
 
 ### Interaction B: Search countries
 
-- **Commit duration**: \_\_\_ s
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![screenshot](image.png)
+- **Render duration**: 461.9 ms
+- **Screenshot**: ![screenshot](screenshots/baseline/Screenshot%202026-06-13%20112629.png)
 
 ### Interaction C: Change year
 
-- **Commit duration**: \_\_\_ s
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![screenshot](image.png)
+- **Render duration**: 31.9 ms
+- **Screenshot**: ![screenshot](screenshots/baseline/Screenshot%202026-06-13%20112715.png)
 
 ### Interaction D: Toggle column
 
-- **Commit duration**: \_\_\_ s
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![screenshot](image.png)
+- **Render duration**: 40.5 ms
+- **Screenshot**: ![screenshot](screenshots/baseline/Screenshot%202026-06-13%20112807.png)
